@@ -229,7 +229,7 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 <!-- UDHAAR KHATA -->
 <div id="pg-ud" class="pg hidden">
  <div class="gh"><button class="gb" onclick="show('pg-home');renderHome()">←</button><b id="ud-title"></b><span id="ud-tot" class="mono" style="font-size:13px;font-weight:800;white-space:nowrap"></span><button class="gb" onclick="openImport('ud')">📥</button></div>
- <div class="srch"><input id="ud-q" placeholder="🔍 Naam search karein (jaise AKW)" oninput="udInput()" autocomplete="off"/></div>
+ <div class="srch"><input id="ud-q" list="ud-nl" placeholder="🔍 Naam search karein (jaise AKW)" oninput="udInput()" autocomplete="off"/></div>
  <div id="ud-sug" class="chips hidden" style="grid-template-columns:1fr;max-height:50vh;overflow:auto"></div>
  <div class="sinfo" id="ud-info" style="margin-top:4px"></div>
  <div class="st" id="ud-st"><div class="sc"><table><colgroup><col style="width:25%"><col style="width:13%"><col style="width:21%"><col style="width:13%"><col style="width:14%"><col style="width:14%"></colgroup><thead><tr><th class="h1">Name</th><th class="h2">Amount</th><th class="h1">Description</th><th class="h3">Paid<br>Amount</th><th class="h1">Net<br>amount</th><th class="h1">Date</th></tr></thead><tbody id="ud-body"></tbody></table></div></div>
@@ -255,12 +255,12 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 <button class="btn-p" style="width:100%;padding:12px" onclick="runImport()">Import Karein</button></div></div>
 
 <div id="m-accren" class="mb hidden"><div class="mc"><div class="mh"><h3>Account ka naam badlein</h3><button class="x" onclick="closeModal('m-accren')">✕</button></div>
-<form onsubmit="saveAccRen(event)"><div class="lf"><label>Naya naam</label><input id="ar-name" class="li" required/></div><button class="btn-p" style="width:100%;padding:12px">Save Name</button></form></div></div>
+<form onsubmit="saveAccRen(event)"><div class="lf"><label>Naya naam</label><input id="ar-name" class="li" required/></div><div id="ar-catbox" class="lf hidden"><label>Account type (Udhaar Khata chunenge to Excel jaisi sheet khulegi)</label><select id="ar-cat" class="li"><option value="shop">🏪 Shop</option><option value="udhaar">💸 Udhaar Khata (Excel sheet)</option><option value="personal">👤 Personal</option><option value="bank">🏦 Bank</option><option value="ghar">🏠 Ghar</option><option value="other">📒 Other</option></select></div><button class="btn-p" style="width:100%;padding:12px">Save Name</button></form></div></div>
 
 <div id="m-acc" class="mb hidden"><div class="mc"><div class="mh"><h3>Naya Account</h3><button class="x" onclick="closeModal('m-acc')">✕</button></div>
 <form onsubmit="createAcc(event)">
 <div class="lf"><label>Account ka naam *</label><input id="ac-name" class="li" required/></div>
-<div class="lf"><label>Category (icon isi se aayega)</label><select id="ac-cat" class="li"><option value="shop">🏪 Shop</option><option value="udhaar">💸 Udhaar</option><option value="personal">👤 Personal</option><option value="bank">🏦 Bank</option><option value="ghar">🏠 Ghar</option><option value="other">📒 Other</option></select></div>
+<div class="lf"><label>Category (icon isi se aayega)</label><select id="ac-cat" class="li"><option value="shop">🏪 Shop</option><option value="udhaar">💸 Udhaar Khata (Excel sheet)</option><option value="personal">👤 Personal</option><option value="bank">🏦 Bank</option><option value="ghar">🏠 Ghar</option><option value="other">📒 Other</option></select></div>
 <button class="btn-p" style="width:100%;padding:12px">Account Banayein</button></form></div></div>
 
 <div id="m-vendor" class="mb hidden"><div class="mc"><div class="mh"><h3>Add New Vendor</h3><button class="x" onclick="closeModal('m-vendor')">✕</button></div>
@@ -370,8 +370,8 @@ let penT=null,penDone=false,arKey=null;
 function penDown(e,k){e.stopPropagation();penDone=false;clearTimeout(penT);e.currentTarget.classList.add('hold');penT=setTimeout(()=>{penDone=true;penUp();if(navigator.vibrate)navigator.vibrate(30);openAccRen(k)},800)}
 function penUp(){clearTimeout(penT);document.querySelectorAll('.pen.hold').forEach(b=>b.classList.remove('hold'))}
 function penTap(e){e.stopPropagation();if(!penDone)toast('Naam badalne ke liye ✎ ko 1 second dabaye rakhein');penDone=false}
-function openAccRen(k){arKey=k;$('ar-name').value=accName(k);openModal('m-accren');setTimeout(()=>{$('ar-name').focus();$('ar-name').select()},50)}
-function saveAccRen(e){e.preventDefault();const n=$('ar-name').value.trim();if(!n)return;const c=state.custom.find(a=>a.id===arKey);if(c)c.name=n;else state.names[arKey]=n;save();closeModal('m-accren');renderHome();toast('Naam badal gaya: '+n)}
+function openAccRen(k){arKey=k;$('ar-name').value=accName(k);const c0=state.custom.find(a=>a.id===k);$('ar-catbox').classList.toggle('hidden',!c0);if(c0)$('ar-cat').value=c0.cat||'other';openModal('m-accren');setTimeout(()=>{$('ar-name').focus();$('ar-name').select()},50)}
+function saveAccRen(e){e.preventDefault();const n=$('ar-name').value.trim();if(!n)return;const c=state.custom.find(a=>a.id===arKey);if(c){c.name=n;c.cat=$('ar-cat').value}else state.names[arKey]=n;save();closeModal('m-accren');renderHome();toast('Naam badal gaya: '+n)}
 function shopTotal(){const c=shopCalc();let t=Number(state.shop.openOthers||0);Object.keys(c.bal).forEach(k=>{t+=c.bal[k]});return Math.round(t*100)/100}
 function renderCustom(){$('h-custom').innerHTML=state.custom.map(a=>{const c=CATS[a.cat]||CATS.other;
  return `<div class="big" onclick="openCash('${a.id}')"><div class="left">${penBtn(a.id)}<div class="ic">${c[0]}</div><div><h3>${esc(a.name)}</h3><small>${c[1]} account</small></div></div><div class="amt mono"><small>${isUd(a.id)?'Total Baaki':'Balance'}</small><span>${inr(accBal(a))}</span></div></div>`}).join('')}
@@ -666,18 +666,15 @@ function renderUd(){
  let tot=0;Object.values(run).forEach(v=>tot+=v);tot=Math.round(tot*100)/100;
  $('ud-title').textContent=a.name;$('ud-tot').textContent='₹'+fn(tot);
  $('ud-nl').innerHTML=Object.values(udNm).map(n=>`<option value="${esc(n)}">`).join('');
- const q=kv($('ud-q').value),sug=$('ud-sug'),st=$('ud-st');
- if(udSel&&!udNm[udSel])udSel=null;
- let list=rows,info=`Kul ${rows.length} entries • ${Object.keys(udNm).length} naam`,tr='';
- sug.classList.add('hidden');st.classList.remove('hidden');
- if(udSel){list=rows.filter(r=>r.k===udSel);let sa=0,sp=0;list.forEach(r=>{sa+=Number(r.amount||0);sp+=Number(r.paid||0)});const r2=n=>Math.round(n*100)/100;
-  info=`${udNm[udSel]} • ${list.length} entries • Baaki ₹${fn(run[udSel])}`;
-  tr=`<tr class="tr2"><td class="sv">Kul</td><td>${r2(sa)}</td><td></td><td>${r2(sp)}</td><td class="${run[udSel]<0?'neg':''}">${run[udSel]}</td><td></td></tr>`}
- else if(q){udKeys=Object.keys(udNm).filter(k=>k.includes(q));st.classList.add('hidden');sug.classList.remove('hidden');
-  sug.innerHTML=udKeys.length?udKeys.map((k,i)=>`<div class="chip" onclick="udPick(${i})"><span>${esc(udNm[k])}</span><em class="${run[k]<0?'neg':''}">${fn(run[k])}</em></div>`).join(''):'<div style="padding:10px;color:#64748b;font-size:13px">Koi naam nahi mila</div>';
-  info=`${udKeys.length} naam mile — naam par tap karein`}
+ const q=kv($('ud-q').value);let list=rows,tr='',info=`Kul ${rows.length} entries • ${Object.keys(udNm).length} naam`;
+ if(q){const mk=Object.keys(udNm).filter(k=>k.includes(q));list=rows.filter(r=>mk.includes(r.k));
+  if(mk.length===1){const k=mk[0];let sa=0,sp=0;list.forEach(r=>{sa+=Number(r.amount||0);sp+=Number(r.paid||0)});const r2=n=>Math.round(n*100)/100;
+   info=`${udNm[k]} • ${list.length} entries • Baaki ₹${fn(run[k])}`;
+   tr=`<tr class="tr2"><td class="sv">Kul</td><td>${r2(sa)}</td><td></td><td>${r2(sp)}</td><td class="${run[k]<0?'neg':''}">${run[k]}</td><td></td></tr>`}
+  else info=`${mk.length} naam • ${list.length} entries`}
+ $('ud-sug').classList.add('hidden');$('ud-st').classList.remove('hidden');
  $('ud-info').textContent=info;
- $('ud-body').innerHTML=(list.map(udRow).join('')||'<tr><td colspan="6" style="padding:18px;color:#64748b">Abhi koi entry nahi. Neeche se add karein ya 📥 se Excel import karein.</td></tr>')+tr}
+ $('ud-body').innerHTML=(list.map(udRow).join('')||`<tr><td colspan="6" style="padding:18px;color:#64748b">${q?'Is naam ki koi entry nahi mili':'Abhi koi entry nahi. Neeche se add karein ya 📥 se Excel import karein.'}</td></tr>`)+tr}
 function addUd(e){e.preventDefault();let name=$('ud-n').value.trim();if(!name)return toast('Naam bharein');
  const amount=parseFloat($('ud-a').value)||0,paid=parseFloat($('ud-p').value)||0;if(!amount&&!paid)return toast('Amount ya Paid bharein');
  const ex=(state.accounts[udId]||[]).find(x=>x.name!==undefined&&kv(x.name)===kv(name));if(ex)name=ex.name;
