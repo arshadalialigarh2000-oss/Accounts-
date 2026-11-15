@@ -134,6 +134,20 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 .pen{background:#f1f5f9;color:#475569;width:30px;height:30px;border-radius:50%;font-size:14px;flex-shrink:0;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation;transition:background .8s,transform .8s}
 .pen.hold{background:#fde047;transform:scale(1.3)}
 .big .left{gap:10px}
+#pg-ud{background:#f6f4ee}
+#pg-ud:not(.hidden){display:flex;flex-direction:column;height:100vh;height:100dvh}
+#pg-ud .gh{padding:10px 12px}#pg-ud .gh b{font-size:17px}
+#pg-ud .st{flex:1;min-height:0;overflow:auto;margin:6px 10px}
+#pg-ud .st .sc{overflow:visible}
+#pg-ud .st th{position:sticky;top:0;z-index:5;font-size:11px!important;padding:5px 2px!important}
+#pg-ud .st td{padding:4px 3px;font-size:12px}
+#pg-ud .st th.h1{background:#fbe3d6}
+#pg-ud .st th.h2{background:#4ea72e}
+#pg-ud .st th.h3{background:#d0d0d0}
+#pg-ud .st td.ua{background:#4ea72e;font-weight:800}
+#pg-ud .st td.up{background:#d9d9d9}
+#pg-ud .st td.sv{text-align:center}
+#pg-ud .st td.ud{font-size:11px}
 @media print{body{background:#fff}.nav,.tb,.ep,.ca,.no-print,.more{display:none!important}.ban{position:static;-webkit-print-color-adjust:exact;print-color-adjust:exact}tr.b1{-webkit-print-color-adjust:exact;print-color-adjust:exact}.sc{overflow:visible}}
 </style></head><body>
 <div class="app">
@@ -171,7 +185,7 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 <!-- PAGE 2B: SHOP / PERSONAL CASHBOOK -->
 <div id="pg-cash" class="pg hidden">
  <div class="nav no-print"><div class="l"><button class="nb" onclick="show('pg-home');renderHome()">← Home</button><div><small>Page 2 • Account</small><div class="t" id="c-name"></div></div></div>
- <button class="nb pdf" onclick="window.print()">PDF / Print</button></div>
+ <div style="display:flex;gap:6px"><button class="nb" onclick="openImport('cash')">📥</button><button class="nb pdf" onclick="window.print()">PDF / Print</button></div></div>
  <div class="ws">
   <div class="ban"><div class="a"><h2 id="c-title"></h2></div><div class="b mono" id="c-bal">0</div></div>
   <div class="sc"><table><thead><tr><th>Date</th><th class="tl">Particular</th><th>Jama (+)</th><th>Kharch (−)</th><th>Balance</th><th class="ca no-print"></th></tr></thead><tbody id="c-body"></tbody></table></div>
@@ -187,7 +201,7 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 
 <!-- SHOP: MAIN -->
 <div id="pg-shop" class="pg hidden">
- <div class="gh"><button class="gb" onclick="show('pg-home');renderHome()">←</button><b>Vendor Ledger</b><button class="gb" onclick="toggleSearch()">🔍</button><button class="gb" onclick="openChipModal()">⋮</button></div>
+ <div class="gh"><button class="gb" onclick="show('pg-home');renderHome()">←</button><b>Vendor Ledger</b><button class="gb" onclick="openImport('shop')">📥</button><button class="gb" onclick="toggleSearch()">🔍</button><button class="gb" onclick="openChipModal()">⋮</button></div>
  <div id="s-srow" class="srch hidden"><input id="s-q" placeholder="Amount (349) ya date (5, 7, 12 / 05-11) ya naam" oninput="renderShopAll()"/></div>
  <div id="s-chips" class="chips"></div><div id="s-sum"></div>
  <div class="sinfo" id="s-info"></div>
@@ -212,12 +226,33 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
  <div class="sinfo" id="sf-info" style="margin-top:6px"></div>
  <div class="st"><div class="sc"><table><colgroup><col style="width:26%"><col style="width:14%"><col style="width:14%"><col style="width:17%"><col style="width:29%"></colgroup><thead><tr><th>Vendor</th><th>Bills</th><th>Paid</th><th>Net Amount</th><th>Date</th></tr></thead><tbody id="sf-body"></tbody></table></div></div>
 </div>
+<!-- UDHAAR KHATA -->
+<div id="pg-ud" class="pg hidden">
+ <div class="gh"><button class="gb" onclick="show('pg-home');renderHome()">←</button><b id="ud-title"></b><span id="ud-tot" class="mono" style="font-size:13px;font-weight:800;white-space:nowrap"></span><button class="gb" onclick="openImport('ud')">📥</button></div>
+ <div class="srch"><input id="ud-q" placeholder="🔍 Naam search karein (jaise AKW)" oninput="udInput()" autocomplete="off"/></div>
+ <div id="ud-sug" class="chips hidden" style="grid-template-columns:1fr;max-height:50vh;overflow:auto"></div>
+ <div class="sinfo" id="ud-info" style="margin-top:4px"></div>
+ <div class="st" id="ud-st"><div class="sc"><table><colgroup><col style="width:25%"><col style="width:13%"><col style="width:21%"><col style="width:13%"><col style="width:14%"><col style="width:14%"></colgroup><thead><tr><th class="h1">Name</th><th class="h2">Amount</th><th class="h1">Description</th><th class="h3">Paid<br>Amount</th><th class="h1">Net<br>amount</th><th class="h1">Date</th></tr></thead><tbody id="ud-body"></tbody></table></div></div>
+ <form class="addbar" style="grid-template-columns:repeat(6,1fr)" onsubmit="addUd(event)">
+  <input id="ud-n" class="ai" list="ud-nl" placeholder="Name" autocomplete="off" style="grid-column:span 3"/>
+  <input id="ud-d" class="ai" placeholder="Description (cash/online/saman)" style="grid-column:span 3"/>
+  <input id="ud-a" class="ai" type="number" step="0.01" placeholder="Amount ₹" style="grid-column:span 2"/>
+  <input id="ud-p" class="ai" type="number" step="0.01" placeholder="Paid ₹" style="grid-column:span 2"/>
+  <button class="adb" style="grid-column:span 2;padding:8px">Add</button>
+ </form><datalist id="ud-nl"></datalist>
+</div>
 <!-- PAGE 3: VENDOR LEDGER (LAST 30) -->
 <div id="pg-l3" class="pg hidden"></div>
 <!-- PAGE 4: FULL LEDGER -->
 <div id="pg-l4" class="pg hidden"></div>
 
 <datalist id="items"></datalist>
+
+<div id="m-imp" class="mb hidden"><div class="mc"><div class="mh"><h3>📥 Excel se Import</h3><button class="x" onclick="closeModal('m-imp')">✕</button></div>
+<div class="note" id="imp-help" style="margin-bottom:10px"></div>
+<textarea id="imp-text" rows="6" class="li mono" style="font-size:11px;margin-bottom:8px" placeholder="Excel ke cells copy karke yahan paste karein..."></textarea>
+<input type="file" accept=".csv,.tsv,.txt,text/csv,text/plain" onchange="impFile(event)" style="width:100%;font-size:12px;margin-bottom:10px"/>
+<button class="btn-p" style="width:100%;padding:12px" onclick="runImport()">Import Karein</button></div></div>
 
 <div id="m-accren" class="mb hidden"><div class="mc"><div class="mh"><h3>Account ka naam badlein</h3><button class="x" onclick="closeModal('m-accren')">✕</button></div>
 <form onsubmit="saveAccRen(event)"><div class="lf"><label>Naya naam</label><input id="ar-name" class="li" required/></div><button class="btn-p" style="width:100%;padding:12px">Save Name</button></form></div></div>
@@ -339,7 +374,7 @@ function openAccRen(k){arKey=k;$('ar-name').value=accName(k);openModal('m-accren
 function saveAccRen(e){e.preventDefault();const n=$('ar-name').value.trim();if(!n)return;const c=state.custom.find(a=>a.id===arKey);if(c)c.name=n;else state.names[arKey]=n;save();closeModal('m-accren');renderHome();toast('Naam badal gaya: '+n)}
 function shopTotal(){const c=shopCalc();let t=Number(state.shop.openOthers||0);Object.keys(c.bal).forEach(k=>{t+=c.bal[k]});return Math.round(t*100)/100}
 function renderCustom(){$('h-custom').innerHTML=state.custom.map(a=>{const c=CATS[a.cat]||CATS.other;
- return `<div class="big" onclick="openCash('${a.id}')"><div class="left">${penBtn(a.id)}<div class="ic">${c[0]}</div><div><h3>${esc(a.name)}</h3><small>${c[1]} account</small></div></div><div class="amt mono"><small>Balance</small><span>${inr(Math.round(cashBal(a.id)*100)/100)}</span></div></div>`}).join('')}
+ return `<div class="big" onclick="openCash('${a.id}')"><div class="left">${penBtn(a.id)}<div class="ic">${c[0]}</div><div><h3>${esc(a.name)}</h3><small>${c[1]} account</small></div></div><div class="amt mono"><small>${isUd(a.id)?'Total Baaki':'Balance'}</small><span>${inr(accBal(a))}</span></div></div>`}).join('')}
 function createAcc(e){e.preventDefault();const name=$('ac-name').value.trim();if(!name)return;
  const id='a_'+Date.now();state.custom.push({id,name,cat:$('ac-cat').value});state.accounts[id]=[];
  save();closeModal('m-acc');$('ac-name').value='';renderHome();toast(name+' account ban gaya!')}
@@ -380,7 +415,7 @@ function createVendor(e){e.preventDefault();const name=$('vn-name').value.trim()
  renderVendors();openLedger(v.id);toast(name+' ledger created!')}
 
 /* ---------- PAGE 2: CASHBOOK (SHOP / PERSONAL / CUSTOM) ---------- */
-function openCash(k){cashKey=k;$('c-date').value=today();show('pg-cash');renderCash()}
+function openCash(k){if(isUd(k))return openUd(k);cashKey=k;$('c-date').value=today();show('pg-cash');renderCash()}
 function renderCash(){
  const nm=accName(cashKey);
  $('c-name').textContent=nm;
@@ -611,6 +646,82 @@ function openChipModal(){renderChips();openModal('m-chip')}
 function renderChips(){$('chip-list').innerHTML=state.shop.chips.map((c,i)=>`<div class="rr"><b>${esc(c)}</b><button class="ml" style="background:none;color:#94a3b8" onclick="delChip(${i})">✕</button></div>`).join('')}
 function addChip(e){e.preventDefault();const n=$('chip-name').value.trim();if(!n)return;if(!state.shop.chips.some(c=>kv(c)===kv(n)))state.shop.chips.push(n);$('chip-name').value='';save();renderChips();renderShopAll()}
 function delChip(i){const k=kv(state.shop.chips[i]);state.shop.openOthers=(state.shop.openOthers||0)+(state.shop.open[k]||0);delete state.shop.open[k];shopV=null;state.shop.chips.splice(i,1);save();renderChips();renderShopAll()}
+
+/* ---------- UDHAAR KHATA ---------- */
+let udSel=null,udId=null,udKeys=[],udNm={},uidN=0;
+const uid=p=>p+Date.now()+'_'+(++uidN);
+const fmtShort=i=>{if(!i||!i.includes('-'))return i||'';const[y,m,d]=i.split('-');return d+'-'+m+'-'+y.slice(2)};
+const isUd=k=>{const a=state.custom.find(x=>x.id===k);return !!a&&(a.cat==='udhaar'||/udhaar|udhar|उधार/i.test(a.name))};
+function udCalc(id){const run={};const rows=(state.accounts[id]||[]).filter(e=>e.name!==undefined).map(e=>{const k=kv(e.name);run[k]=Math.round(((run[k]||0)+Number(e.amount||0)-Number(e.paid||0))*100)/100;return{...e,k,net:run[k]}});return{rows,run}}
+function udTotal(id){let t=0;Object.values(udCalc(id).run).forEach(v=>t+=v);return Math.round(t*100)/100}
+const accBal=a=>isUd(a.id)?udTotal(a.id):Math.round(cashBal(a.id)*100)/100;
+function openUd(k){udId=k;cashKey=k;udSel=null;$('ud-q').value='';show('pg-ud');renderUd();udScrollEnd()}
+function udScrollEnd(){const t=$('ud-st');if(t)setTimeout(()=>{t.scrollTop=t.scrollHeight},30)}
+function udInput(){udSel=null;renderUd()}
+function udPick(i){udSel=udKeys[i];$('ud-q').value=udNm[udSel]||'';renderUd()}
+function udRow(e,i){return `<tr class="${i%2?'':'o'}"><td class="sv">${esc(e.name)}</td><td class="ua">${e.amount||''}</td><td class="sv ud">${esc(e.desc)}</td><td class="up">${e.paid||''}</td><td class="sr ${e.net<0?'neg':''}">${e.net}</td><td class="sd">${fmtShort(e.at)} <button class="ra" onclick="delUd('${e.id}')">${pendDel===e.id?'OK?':'✕'}</button></td></tr>`}
+function renderUd(){
+ const a=state.custom.find(x=>x.id===udId);if(!a)return;
+ const{rows,run}=udCalc(udId);udNm={};rows.forEach(r=>{if(!udNm[r.k])udNm[r.k]=r.name});
+ let tot=0;Object.values(run).forEach(v=>tot+=v);tot=Math.round(tot*100)/100;
+ $('ud-title').textContent=a.name;$('ud-tot').textContent='₹'+fn(tot);
+ $('ud-nl').innerHTML=Object.values(udNm).map(n=>`<option value="${esc(n)}">`).join('');
+ const q=kv($('ud-q').value),sug=$('ud-sug'),st=$('ud-st');
+ if(udSel&&!udNm[udSel])udSel=null;
+ let list=rows,info=`Kul ${rows.length} entries • ${Object.keys(udNm).length} naam`,tr='';
+ sug.classList.add('hidden');st.classList.remove('hidden');
+ if(udSel){list=rows.filter(r=>r.k===udSel);let sa=0,sp=0;list.forEach(r=>{sa+=Number(r.amount||0);sp+=Number(r.paid||0)});const r2=n=>Math.round(n*100)/100;
+  info=`${udNm[udSel]} • ${list.length} entries • Baaki ₹${fn(run[udSel])}`;
+  tr=`<tr class="tr2"><td class="sv">Kul</td><td>${r2(sa)}</td><td></td><td>${r2(sp)}</td><td class="${run[udSel]<0?'neg':''}">${run[udSel]}</td><td></td></tr>`}
+ else if(q){udKeys=Object.keys(udNm).filter(k=>k.includes(q));st.classList.add('hidden');sug.classList.remove('hidden');
+  sug.innerHTML=udKeys.length?udKeys.map((k,i)=>`<div class="chip" onclick="udPick(${i})"><span>${esc(udNm[k])}</span><em class="${run[k]<0?'neg':''}">${fn(run[k])}</em></div>`).join(''):'<div style="padding:10px;color:#64748b;font-size:13px">Koi naam nahi mila</div>';
+  info=`${udKeys.length} naam mile — naam par tap karein`}
+ $('ud-info').textContent=info;
+ $('ud-body').innerHTML=(list.map(udRow).join('')||'<tr><td colspan="6" style="padding:18px;color:#64748b">Abhi koi entry nahi. Neeche se add karein ya 📥 se Excel import karein.</td></tr>')+tr}
+function addUd(e){e.preventDefault();let name=$('ud-n').value.trim();if(!name)return toast('Naam bharein');
+ const amount=parseFloat($('ud-a').value)||0,paid=parseFloat($('ud-p').value)||0;if(!amount&&!paid)return toast('Amount ya Paid bharein');
+ const ex=(state.accounts[udId]||[]).find(x=>x.name!==undefined&&kv(x.name)===kv(name));if(ex)name=ex.name;
+ state.accounts[udId].push({id:uid('u_'),name,amount,desc:$('ud-d').value.trim(),paid,at:today()});
+ ['ud-n','ud-d','ud-a','ud-p'].forEach(i=>$(i).value='');
+ save();renderUd();udScrollEnd();toast('Entry saved • '+fmtDate(today()))}
+function delUd(id){if(pendDel!==id){pendDel=id;renderUd();return toast('Delete ke liye dubara "OK?" dabayein')}
+ state.accounts[udId]=state.accounts[udId].filter(x=>x.id!==id);pendDel=null;save();renderUd();toast('Entry deleted')}
+
+/* ---------- EXCEL IMPORT ---------- */
+let impType=null;
+const IMP_HELP={
+ ud:'Columns ka order: <b>Name, Amount, Description, Paid, (Net — chhod diya jayega)</b>. Header row apne aap skip hogi. Net amount app khud calculate karega.',
+ shop:'Columns ka order: <b>Vendor, Bill, Paid, Date</b> (Date optional).',
+ cash:'Columns ka order: <b>Date, Particular, Jama, Kharch</b>.'};
+function openImport(t){impType=t;$('imp-help').innerHTML=IMP_HELP[t];$('imp-text').value='';openModal('m-imp')}
+function impFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('imp-text').value=ev.target.result};r.readAsText(f);e.target.value=''}
+function parseTable(t){return t.replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l=>{
+ if(l.includes('\t'))return l.split('\t').map(x=>x.trim());
+ const out=[];let cur='',q=false;for(const ch of l){if(ch==='"')q=!q;else if(ch===','&&!q){out.push(cur.trim());cur=''}else cur+=ch}out.push(cur.trim());return out})}
+const isN=v=>/^[₹\s]*-?[\d,]+(\.\d+)?\s*$/.test(String(v||''));
+const nm=v=>{const n=parseFloat(String(v||'').replace(/[₹,\s]/g,''));return isNaN(n)?0:n};
+function pdate(v){v=String(v||'').trim();let m=v.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
+ if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+ m=v.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/);
+ if(m){let y=+m[3];if(y<100)y+=2000;return y+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0')}
+ return ''}
+function runImport(){
+ const rows=parseTable($('imp-text').value);if(!rows.length)return toast('Pehle data paste karein');
+ let n=0;const t=impType;
+ if(t==='ud'){const a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
+  rows.forEach(r=>{const name=(r[0]||'').trim();if(!name||!(isN(r[1])||isN(r[3])))return;const am=nm(r[1]),pd=nm(r[3]);if(!am&&!pd)return;
+   a.push({id:uid('u_'),name,amount:am,desc:(r[2]||'').trim(),paid:pd,at:today()});n++})}
+ else if(t==='shop'){rows.forEach(r=>{let name=(r[0]||'').trim();if(!name||!(isN(r[1])||isN(r[2])))return;const b=nm(r[1]),p=nm(r[2]);if(!b&&!p)return;
+   const ch=state.shop.chips.find(c=>kv(c)===kv(name));if(ch)name=ch;else{const ex=state.shop.entries.find(x=>kv(x.vendor)===kv(name));if(ex)name=ex.vendor}
+   state.shop.entries.push({id:uid('s_'),vendor:name,bill:b,paid:p,date:pdate(r[3])||today()});n++})}
+ else{const a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
+  rows.forEach(r=>{if(!(isN(r[2])||isN(r[3])))return;const d=pdate(r[0])||today(),pt=(r[1]||'').trim(),j=nm(r[2]),k=nm(r[3]);
+   if(j>0){a.push({id:uid('c_'),date:d,type:'in',particular:pt,amount:j});n++}
+   if(k>0){a.push({id:uid('c_'),date:d,type:'out',particular:pt,amount:k});n++}})}
+ if(!n)return toast('Koi sahi row nahi mili — columns ka order check karein');
+ save();closeModal('m-imp');$('imp-text').value='';
+ if(t==='ud')renderUd();else if(t==='shop'){renderShopAll();scrollShopEnd()}else renderCash();
+ toast(n+' entries import ho gayi')}
 
 /* ---------- BACKUP ---------- */
 function dlBackup(){dl(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),'Ledger_Backup_'+today()+'.json');toast('Backup downloaded!')}
