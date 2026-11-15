@@ -162,12 +162,14 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 #pg-l3 th,#pg-l4 th,#pg-cash th{position:sticky;top:0;z-index:30;background:#e8eef7}
 #pg-cl{background:#f1f5f9}
 #pg-cl:not(.hidden){display:flex;flex-direction:column;height:100vh;height:100dvh}
-.clban{margin:10px 10px 6px;display:grid;grid-template-columns:7fr 5fr;border-radius:16px;overflow:hidden;background:linear-gradient(145deg,#14532d,#16a34a);box-shadow:0 8px 16px rgba(20,83,45,.4),inset 0 2px 0 rgba(255,255,255,.3),inset 0 -4px 0 rgba(0,0,0,.25);color:#fff}
+.clban{margin:10px 10px 6px;display:grid;grid-template-columns:7fr 5fr;border-radius:16px;overflow:hidden;background:linear-gradient(145deg,#020617,#1f2937);color:#fff;box-shadow:0 8px 16px rgba(2,6,23,.5),inset 0 2px 0 rgba(255,255,255,.14),inset 0 -4px 0 rgba(0,0,0,.55)}
 .cla{padding:12px 10px;display:flex;flex-direction:column;justify-content:center;gap:6px;text-align:center}
-.cln{font-size:17px;font-weight:900;line-height:1.2;text-shadow:0 2px 3px rgba(0,0,0,.35)}
-.clp{font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
-.clpen{background:rgba(255,255,255,.22);color:#fff;border-radius:50%;width:24px;height:24px;font-size:12px}
-.clb{display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;margin:8px;border-radius:12px;background:linear-gradient(180deg,#3b82f6,#1e3a8a);color:#fff;box-shadow:0 3px 0 #172554,inset 0 2px 0 rgba(255,255,255,.35)}
+.cln{font-size:17px;font-weight:900;line-height:1.2;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.6)}
+.cll{font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.3px}
+.clp{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+#cl-per{background:linear-gradient(180deg,#fde047,#facc15);color:#111827;padding:5px 12px;border-radius:999px;font-size:13px;font-weight:900;box-shadow:0 3px 0 #a16207,inset 0 1px 0 rgba(255,255,255,.7)}
+.clpen{background:#facc15;color:#111827;border-radius:50%;width:28px;height:28px;font-size:14px;font-weight:900;box-shadow:0 2px 0 #a16207}
+.clb{display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;margin:8px;border-radius:12px;background:linear-gradient(180deg,#1e293b,#020617);color:#facc15;text-shadow:0 2px 3px rgba(0,0,0,.6);box-shadow:0 0 0 2px #facc15,0 4px 0 #a16207,inset 0 2px 0 rgba(255,255,255,.16)}
 #pg-cl .clt{flex:1;min-height:0;overflow:auto;margin:4px 10px;border:1.5px solid #1e3a8a;border-radius:12px;background:#fff}
 #pg-cl table{table-layout:fixed}
 #pg-cl th{position:sticky;top:0;z-index:5;background:#1e3a8a;color:#fff;font-size:11px;padding:6px 3px;white-space:normal;line-height:1.15;border-color:#334e9b}
@@ -185,6 +187,9 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 .cladd{background:#14532d;color:#fff;border-radius:12px;padding:10px;font-weight:800;font-size:14px;width:100%}
 .clogt th{background:#1e3a8a;color:#fff;font-size:10px;padding:5px 3px}
 .clogt td{font-size:11px;text-align:center;font-weight:700;padding:4px 3px}
+.pnw{display:flex;align-items:center;gap:6px}.pnb{display:flex;gap:3px;flex-shrink:0}
+.clib{width:24px;height:24px;border-radius:50%;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0}
+.clib.e{background:#dbeafe;color:#1d4ed8}.clib.d{background:#fee2e2;color:#dc2626;width:auto;min-width:24px;padding:0 4px;border-radius:12px}
 @media print{body{background:#fff}.nav,.tb,.ep,.ca,.no-print,.more{display:none!important}.ban{position:static;-webkit-print-color-adjust:exact;print-color-adjust:exact}tr.b1{-webkit-print-color-adjust:exact;print-color-adjust:exact}.sc{overflow:visible}#pg-l3 .sc,#pg-l4 .sc,#pg-cash .sc{max-height:none!important;overflow:visible!important}}
 </style></head><body>
 <div class="app">
@@ -192,7 +197,7 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 
 <!-- PAGE 1: HOME -->
 <div id="pg-home" class="pg">
- <header class="hdr"><div class="row"><div><h1>Billing & Ledger</h1><p>Shop • Personal • Doctors • v11</p></div>
+ <header class="hdr"><div class="row"><div><h1>Billing & Ledger</h1><p>Shop • Personal • Doctors • v12</p></div>
  <button class="btn-glass" onclick="openModal('m-backup')">⬇ Backup</button></div></header>
  <div class="body">
   <div class="big" onclick="openShop()"><div class="left"><button type="button" class="pen" onpointerdown="penDown(event,'shop')" onpointerup="penUp()" onpointercancel="penUp()" onpointerleave="penUp()" onclick="penTap(event)" oncontextmenu="return false">✎</button><div class="ic">🏪</div><div><h3 id="h-n-shop">Shop Vendors Account</h3><small>Vendors ka baaki</small></div></div><div class="amt mono"><small>Total Baaki</small><span id="h-shop">₹0</span></div></div>
@@ -288,9 +293,9 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 </div>
 <!-- CLINIC SHEET (Dr. Rehman) -->
 <div id="pg-cl" class="pg hidden">
- <div class="nav"><div class="l"><button class="nb" onclick="backToVendors()">← Doctors</button><div style="min-width:0"><small>Clinic Sheet</small><div class="t" id="cl-nt"></div></div></div></div>
- <div class="clban"><div class="cla"><div class="cln" id="cl-name"></div><div class="clp"><span id="cl-per"></span><button class="clpen" onclick="openCper()">✎</button></div></div><div class="clb mono" id="cl-tot"></div></div>
- <div class="clt"><table><colgroup><col style="width:30%"><col style="width:17%"><col style="width:15%"><col style="width:19%"><col style="width:19%"></colgroup><thead><tr><th>Products</th><th>Net Qty<br>in (tab)</th><th>MRP<br>per tab</th><th>Total<br>Amount</th><th id="cl-th5"></th></tr></thead><tbody id="cl-body"></tbody></table></div>
+ <div class="nav"><div class="l"><button class="nb" onclick="backToVendors()">← Doctors</button><div style="min-width:0"><small>Clinic Sheet</small><div class="t" id="cl-nt"></div></div></div><button class="nb wa" onclick="clImg()">📷 Image</button></div>
+ <div class="clban"><div class="cla"><div class="cln" id="cl-name"></div><div class="cll">IS PERIOD KA NET AMOUNT</div><div class="clp"><span id="cl-per"></span><button class="clpen" onclick="openCper()">✎</button></div></div><div class="clb mono" id="cl-tot"></div></div>
+ <div class="clt"><table><colgroup><col style="width:37%"><col style="width:15%"><col style="width:13%"><col style="width:17.5%"><col style="width:17.5%"></colgroup><thead><tr><th>Products</th><th>Net Qty<br>in (tab)</th><th>MRP<br>per tab</th><th>Total<br>Amount</th><th id="cl-th5"></th></tr></thead><tbody id="cl-body"></tbody></table></div>
  <div class="clbot">
   <form id="cl-form" onsubmit="addClinic(event)" style="display:flex;flex-direction:column;gap:6px">
    <div class="clin1"><input id="cl-p" list="cl-pl" placeholder="Product naam" autocomplete="off" oninput="clHint()"/><input id="cl-m" type="number" step="0.01" placeholder="MRP/tab"/></div>
@@ -314,6 +319,11 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 <input type="file" accept=".csv,.tsv,.txt,text/csv,text/plain" onchange="impFile(event)" style="width:100%;font-size:12px;margin-bottom:10px"/>
 <button class="btn-p" style="width:100%;padding:12px" onclick="runImport()">Import Karein</button></div></div>
 
+<div id="m-cprod" class="mb hidden"><div class="mc"><div class="mh"><h3>Product edit</h3><button class="x" onclick="closeModal('m-cprod')">✕</button></div>
+<form onsubmit="saveCprod(event)"><div class="lf"><label>Product ka naam</label><input id="cpd-n" class="li" required/></div>
+<div class="g2"><div class="lf"><label>MRP per tab ₹</label><input id="cpd-m" class="li mono" type="number" step="0.01" min="0" required/></div><div class="lf"><label>Last month's qty.</label><input id="cpd-l" class="li mono" type="number" step="0.01"/></div></div>
+<div class="lf"><label>Qty. remained at shop</label><input id="cpd-r" class="li mono" type="number" step="0.01"/></div>
+<button class="btn-p" style="width:100%;padding:12px">Save</button></form></div></div>
 <div id="m-cper" class="mb hidden"><div class="mc"><div class="mh"><h3>Period aur Percent</h3><button class="x" onclick="closeModal('m-cper')">✕</button></div>
 <form onsubmit="saveCper(event)"><div class="g2"><div class="lf"><label>Se (date)</label><input id="cp-from" type="date" class="li" required/></div><div class="lf"><label>Tak (date)</label><input id="cp-to" type="date" class="li" required/></div></div>
 <div class="lf"><label>MRP ka kitna % (Net Amount ke liye)</label><input id="cp-pct" type="number" step="0.01" min="0" class="li mono"/></div>
@@ -468,7 +478,7 @@ function renderVendors(){
  state.vendors.forEach(v=>{if(!isClinic(v))tot+=buildLedger(v).finalBalance});
  $('v-total').textContent=inr(tot);$('vcount').textContent=state.vendors.length;
  const list=state.vendors.filter(v=>v.name.toLowerCase().includes(q));
- $('vlist').innerHTML=list.length?list.map(v=>{const cl=isClinic(v),s=cl?{lastDate:fmtDate(clinicPeriod(v).to),finalBalance:clinicCalc(v).total}:buildLedger(v);const ini=v.name.replace(/^Dr\.\s*/i,'').charAt(0).toUpperCase()||'V';
+ $('vlist').innerHTML=list.length?list.map(v=>{const cl=isClinic(v),s=cl?{lastDate:fmtDate(clinicPeriod(v).to),finalBalance:Math.round(clinicCalc(v).total)}:buildLedger(v);const ini=v.name.replace(/^Dr\.\s*/i,'').charAt(0).toUpperCase()||'V';
   return `<div class="vc" onclick="openLedger('${v.id}')"><div class="left"><div class="av">${esc(ini)}</div><div style="min-width:0"><div class="vn">${esc(v.name)}</div><div class="vm">Last: ${s.lastDate} • ${cl?(v.moves||[]).length:v.entries.length} rows${v.phone?' • '+esc(v.phone):''}</div></div></div><div class="vr"><small>${cl?'Dena hai':'Final Balance'}</small><b class="mono">${inr(s.finalBalance)}</b></div></div>`}).join('')
  :'<div style="text-align:center;padding:28px;background:#fff;border-radius:16px;border:1px dashed #cbd5e1;color:#64748b;font-size:13px">Koi doctor nahi mila.</div>'}
 function renderRates(){
@@ -816,13 +826,13 @@ function clinicCalc(v){const P=clinicPeriod(v),pct=v.pct==null?30:Number(v.pct);
   return{p,add,mi,last,rem,net,total,na}});
  return{P,pct,rows,total:rd2(rows.reduce((s,r)=>s+r.na,0))}}
 function renderClinic(){const v=cv();if(!v)return;const C=clinicCalc(v);
- $('cl-nt').textContent=v.name;$('cl-name').textContent=v.name;$('cl-tot').textContent='₹'+fn(C.total);
+ $('cl-nt').textContent=v.name;$('cl-name').textContent=v.name;$('cl-tot').textContent='₹'+fn(Math.round(C.total));
  $('cl-per').textContent=fmtDate(C.P.from)+' se '+fmtDate(C.P.to);
  $('cl-th5').innerHTML='Net Amount<br>('+C.pct+'% of MRP)';
  $('cl-pl').innerHTML=(v.products||[]).map(p=>`<option value="${esc(p.name)}">`).join('');
  let sn=0,st=0,sa=0;C.rows.forEach(r=>{sn+=r.net;st+=r.total;sa+=r.na});
- $('cl-body').innerHTML=(C.rows.map((r,i)=>`<tr class="${i%2?'g':''}"><td class="pn">${esc(r.p.name)} <button class="ra" onclick="delProd('${r.p.id}')">${pendDel===r.p.id?'OK?':'✕'}</button></td><td class="${r.net<0?'neg':''}">${r.net}</td><td>${r.p.mrp}</td><td>${r.total}</td><td>${r.na}</td></tr>`).join('')||'<tr><td colspan="5" style="padding:18px;color:#64748b">Abhi koi product nahi. Neeche Product + MRP + quantity bharkar Add karein.</td></tr>')
-  +(C.rows.length?`<tr class="tt"><td class="pn">Kul</td><td>${rd2(sn)}</td><td></td><td>${rd2(st)}</td><td>${rd2(sa)}</td></tr>`:'')}
+ $('cl-body').innerHTML=(C.rows.map((r,i)=>`<tr class="${i%2?'g':''}"><td class="pn"><div class="pnw"><span class="pnb"><button class="clib e" onclick="editProd('${r.p.id}')">✎</button><button class="clib d" onclick="delProd('${r.p.id}')">${pendDel===r.p.id?'OK?':'✕'}</button></span><span>${esc(r.p.name)}</span></div></td><td class="${r.net<0?'neg':''}">${r.net}</td><td>${r.p.mrp}</td><td>${r.total}</td><td>${r.na}</td></tr>`).join('')||'<tr><td colspan="5" style="padding:18px;color:#64748b">Abhi koi product nahi. Neeche Product + MRP + quantity bharkar Add karein.</td></tr>')
+  +(C.rows.length?`<tr class="tt"><td class="pn">Total</td><td>${rd2(sn)}</td><td></td><td>${rd2(st)}</td><td>${rd2(sa)}</td></tr>`:'')}
 function clHint(){const v=cv(),n=kv($('cl-p').value);const r=n?clinicCalc(v).rows.find(x=>kv(x.p.name)===n):null;
  $('cl-m').placeholder=r?String(r.p.mrp):'MRP/tab';$('cl-l').placeholder=r?String(r.last):'Last';$('cl-r').placeholder=r?String(r.rem):'Remain'}
 function addClinic(e){e.preventDefault();const v=cv();if(!v)return;const name=$('cl-p').value.trim();if(!name)return toast('Product ka naam bharein');
@@ -849,6 +859,48 @@ function renderClog(){const v=cv(),P=clinicPeriod(v),pn={};(v.products||[]).forE
 function delMove(id){if(pendDel!==id){pendDel=id;renderClog();return toast('Delete ke liye dubara "OK?" dabayein')}
  const v=cv();v.moves=v.moves.filter(x=>x.id!==id);pendDel=null;save();renderClog();renderClinic();toast('Entry deleted')}
 
+let cpId=null;
+function editProd(id){const v=cv(),C=clinicCalc(v),r=C.rows.find(x=>x.p.id===id);if(!r)return;cpId=id;
+ $('cpd-n').value=r.p.name;$('cpd-m').value=r.p.mrp;$('cpd-l').value=r.last;$('cpd-r').value=r.rem;openModal('m-cprod')}
+function saveCprod(e){e.preventDefault();const v=cv(),C=clinicCalc(v),r=C.rows.find(x=>x.p.id===cpId);if(!r)return;
+ const n=$('cpd-n').value.trim(),m=parseFloat($('cpd-m').value);if(!n||isNaN(m))return;
+ if(v.products.some(x=>x.id!==cpId&&kv(x.name)===kv(n)))return toast('Ye naam pehle se hai');
+ r.p.name=n;r.p.mrp=m;
+ const lv=parseFloat($('cpd-l').value),rv=parseFloat($('cpd-r').value),ln=!isNaN(lv)&&lv!==r.last?lv:null,rn=!isNaN(rv)&&rv!==r.rem?rv:null;
+ if(ln!=null||rn!=null){if(!v.moves)v.moves=[];v.moves.push({id:uid('m_'),pid:cpId,add:null,minus:null,last:ln,rem:rn,date:today()<=C.P.to?today():C.P.to})}
+ save();closeModal('m-cprod');renderClinic();toast('Product update ho gaya')}
+async function clImg(){const v=cv();if(!v)return;toast('Image ban rahi hai...');
+ try{const C=clinicCalc(v),W=540,S=2,pad=12,bh=118,hh=46,rh=34,n=C.rows.length,bw=W-2*pad,tx=pad,ty=pad+bh+10,th=hh+(n+1)*rh,H=ty+th+pad;
+  const cvs=document.createElement('canvas');cvs.width=W*S;cvs.height=H*S;const x=cvs.getContext('2d');x.scale(S,S);
+  const fam=getComputedStyle(document.body).fontFamily,mono=getComputedStyle($('cl-tot')).fontFamily;
+  const rr=(a,b,w,h,r,f)=>{x.fillStyle=f;x.beginPath();if(x.roundRect)x.roundRect(a,b,w,h,r);else x.rect(a,b,w,h);x.fill()};
+  x.fillStyle='#f1f5f9';x.fillRect(0,0,W,H);
+  const g=x.createLinearGradient(pad,pad,W-pad,pad+bh);g.addColorStop(0,'#020617');g.addColorStop(1,'#1f2937');rr(pad,pad,bw,bh,16,g);
+  x.fillStyle='rgba(255,255,255,.14)';x.fillRect(pad+8,pad,bw-16,2);
+  const lw=bw*.58;x.textAlign='center';x.textBaseline='middle';
+  x.fillStyle='#fff';const fs=fitFont(x,v.name,900,22,fam,lw-24);x.font=`900 ${fs}px ${fam}`;x.fillText(v.name,pad+lw/2,pad+38);
+  const pt=fmtDate(C.P.from)+' se '+fmtDate(C.P.to);x.font=`900 14px ${fam}`;const pw=x.measureText(pt).width+26;
+  rr(pad+lw/2-pw/2,pad+bh-52,pw,30,15,'#a16207');rr(pad+lw/2-pw/2,pad+bh-55,pw,30,15,'#facc15');x.fillStyle='#111827';x.fillText(pt,pad+lw/2,pad+bh-40);
+  const bx=pad+lw+4,by=pad+12,bwd=bw-lw-16,bhg=bh-24;
+  rr(bx-2,by-2,bwd+4,bhg+4,14,'#facc15');const g2=x.createLinearGradient(0,by,0,by+bhg);g2.addColorStop(0,'#1e293b');g2.addColorStop(1,'#020617');rr(bx,by,bwd,bhg,12,g2);
+  const at='₹'+fn(Math.round(C.total));x.fillStyle='#facc15';const af=fitFont(x,at,900,32,mono,bwd-14);x.font=`900 ${af}px ${mono}`;x.fillText(at,bx+bwd/2,by+bhg/2);
+  const cw=[.37,.15,.13,.175,.175].map(f=>f*bw),cx=[];let a0=tx;cw.forEach(w=>{cx.push(a0);a0+=w});
+  x.fillStyle='#fff';x.fillRect(tx,ty,bw,th);
+  x.fillStyle='#1e3a8a';x.fillRect(tx,ty,bw,hh);
+  const hd=[['Products'],['Net Qty','in (tab)'],['MRP','per tab'],['Total','Amount'],['Net Amount','('+C.pct+'% of MRP)']];
+  x.fillStyle='#fff';x.font=`800 12px ${fam}`;hd.forEach((l,i)=>l.forEach((t,j)=>x.fillText(t,cx[i]+cw[i]/2,ty+hh/2+(j-(l.length-1)/2)*15)));
+  let sn=0,st=0,sa=0;
+  C.rows.forEach((r,i)=>{const y=ty+hh+i*rh;sn+=r.net;st+=r.total;sa+=r.na;x.fillStyle=i%2?'#dcfce7':'#fff';x.fillRect(tx,y,bw,rh);
+   x.fillStyle='#0f172a';x.textAlign='left';const nf=fitFont(x,r.p.name,700,13,fam,cw[0]-12);x.font=`700 ${nf}px ${fam}`;x.fillText(r.p.name,cx[0]+6,y+rh/2);
+   x.textAlign='center';x.font=`700 13px ${fam}`;[r.net,r.p.mrp,r.total,r.na].forEach((t,k)=>x.fillText(String(t),cx[k+1]+cw[k+1]/2,y+rh/2))});
+  const yt=ty+hh+n*rh;x.fillStyle='#14532d';x.fillRect(tx,yt,bw,rh);x.fillStyle='#fff';x.textAlign='left';x.font=`900 13px ${fam}`;x.fillText('Total',cx[0]+6,yt+rh/2);
+  x.textAlign='center';[rd2(sn),'',rd2(st),rd2(sa)].forEach((t,k)=>x.fillText(String(t),cx[k+1]+cw[k+1]/2,yt+rh/2));
+  x.strokeStyle='#7f9aa0';x.lineWidth=1;for(let i=0;i<=n+1;i++){const y=ty+hh+i*rh+.5;x.beginPath();x.moveTo(tx,y);x.lineTo(tx+bw,y);x.stroke()}
+  for(let k=1;k<5;k++){x.beginPath();x.moveTo(cx[k]+.5,ty);x.lineTo(cx[k]+.5,ty+th);x.stroke()}
+  x.strokeStyle='#1e3a8a';x.lineWidth=2;x.strokeRect(tx+1,ty+1,bw-2,th-2);
+  const blob=await new Promise(r=>cvs.toBlob(r,'image/jpeg',.95));
+  dl(blob,v.name.replace(/[^a-z0-9]/gi,'_')+'_'+today()+'.jpg');toast('Image save ho gayi')}catch(err){toast('Image banane me dikkat aayi')}}
+
 /* ---------- EXCEL IMPORT ---------- */
 let impType=null;
 const IMP_HELP={
@@ -858,53 +910,4 @@ const IMP_HELP={
  doc:'Columns ka order (ledger table jaisa): <b>Date, Particular, Qty (received ho to cash/online), Rate, Total (chhod diya jayega), Received Amount, Final (chhod diya jayega)</b>. Date khali ho to upar wali date maani jayegi. "Previous Balance" wali row ka amount Final column me likhein.'};
 function openImport(t){impType=t;let h=IMP_HELP[t];if(t==='sheet')h='Columns ka order: <b>'+colsOf(cashKey).map(c=>esc(c.n)).join(', ')+'</b>. Header row apne aap skip hogi. Date import wale din ki lagegi.';$('imp-help').innerHTML=h;$('imp-text').value='';openModal('m-imp')}
 function impFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('imp-text').value=ev.target.result};r.readAsText(f);e.target.value=''}
-function parseTable(t){return t.replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l=>{
- if(l.includes('\t'))return l.split('\t').map(x=>x.trim());
- const out=[];let cur='',q=false;for(const ch of l){if(ch==='"')q=!q;else if(ch===','&&!q){out.push(cur.trim());cur=''}else cur+=ch}out.push(cur.trim());return out})}
-const isN=v=>/^[₹\s]*-?[\d,]+(\.\d+)?\s*$/.test(String(v||''));
-const nm=v=>{const n=parseFloat(String(v||'').replace(/[₹,\s]/g,''));return isNaN(n)?0:n};
-function pdate(v){v=String(v||'').trim();let m=v.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
- if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
- m=v.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/);
- if(m){let y=+m[3];if(y<100)y+=2000;return y+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0')}
- return ''}
-function runImport(){
- const rows=parseTable($('imp-text').value);if(!rows.length)return toast('Pehle data paste karein');
- let n=0;const t=impType;
- if(t==='ud'){const a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
-  rows.forEach(r=>{const name=(r[0]||'').trim();if(!name||!(isN(r[1])||isN(r[3])))return;const am=nm(r[1]),pd=nm(r[3]);if(!am&&!pd)return;
-   a.push({id:uid('u_'),name,amount:am,desc:(r[2]||'').trim(),paid:pd,at:today()});n++})}
- else if(t==='shop'){rows.forEach(r=>{let name=(r[0]||'').trim();if(!name||!(isN(r[1])||isN(r[2])))return;const b=nm(r[1]),p=nm(r[2]);if(!b&&!p)return;
-   const ch=state.shop.chips.find(c=>kv(c)===kv(name));if(ch)name=ch;else{const ex=state.shop.entries.find(x=>kv(x.vendor)===kv(name));if(ex)name=ex.vendor}
-   state.shop.entries.push({id:uid('s_'),vendor:name,bill:b,paid:p,date:pdate(r[3])||today()});n++})}
- else if(t==='sheet'){const cs=colsOf(cashKey),a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
-  rows.forEach(r=>{if(cs.some((c,i)=>c.t==='num'&&(r[i]||'').trim()&&!isN(r[i])))return;
-   const v=cs.map((c,i)=>c.t==='num'?nm(r[i]):(r[i]||'').trim());if(!v.some(x=>x))return;a.push({id:uid('h_'),v,at:today()});n++})}
- else if(t==='doc'){const dv=state.vendors.find(x=>x.id===activeV);if(!dv)return toast('Pehle doctor kholein');let ld='';
-  rows.forEach(r=>{const d0=pdate(r[0]);if(d0)ld=d0;const date=ld||today(),p=(r[1]||'').trim();if(!p)return;
-   if(/^(previous|opening)/i.test(p)){const am=nm(r[6])||nm(r[5])||nm(r[3])||nm(r[2]);if(am){dv.entries.push({id:uid('e_'),date,type:'opening',particular:'Previous Balance',openingAmount:am});n++}return}
-   if(isN(r[2])&&isN(r[3])){const q=nm(r[2]),rt=nm(r[3]);if(q>0){dv.entries.push({id:uid('e_'),date,type:'item',particular:p,qty:q,rate:rt});n++}return}
-   if(isN(r[5])&&nm(r[5])>0){dv.entries.push({id:uid('e_'),date,type:'received',particular:'Received Amt',mode:/online/i.test(r[2])?'online':'cash',received:nm(r[5])});n++}})}
- else{const a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
-  rows.forEach(r=>{if(!(isN(r[2])||isN(r[3])))return;const d=pdate(r[0])||today(),pt=(r[1]||'').trim(),j=nm(r[2]),k=nm(r[3]);
-   if(j>0){a.push({id:uid('c_'),date:d,type:'in',particular:pt,amount:j});n++}
-   if(k>0){a.push({id:uid('c_'),date:d,type:'out',particular:pt,amount:k});n++}})}
- if(!n)return toast('Koi sahi row nahi mili — columns ka order check karein');
- save();closeModal('m-imp');$('imp-text').value='';
- if(t==='ud')renderUd();else if(t==='sheet'){renderSheet();shScrollEnd()}else if(t==='doc')renderLedger();else if(t==='shop'){renderShopAll();scrollShopEnd()}else renderCash();
- toast(n+' entries import ho gayi')}
-
-/* ---------- BACKUP ---------- */
-function dlBackup(){dl(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),'Ledger_Backup_'+today()+'.json');toast('Backup downloaded!')}
-function copyBackup(){const t=$('rs-text');t.value=JSON.stringify(state);t.select();try{document.execCommand('copy');toast('Backup text copied!')}catch(e){toast('Box se manually copy karein')}}
-function restoreFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>applyBackup(ev.target.result);r.readAsText(f)}
-function restoreText(){const r=$('rs-text').value.trim();if(!r)return toast('Pehle backup text paste karein');applyBackup(r)}
-function applyBackup(raw){try{const p=JSON.parse(raw);if(!p||!Array.isArray(p.vendors)||!Array.isArray(p.rates))return toast('Invalid backup format!');
- state=normShop(p);if(!state.accounts)state.accounts={};['shop','personal'].forEach(k=>{if(!Array.isArray(state.accounts[k]))state.accounts[k]=[]});
- save();closeModal('m-backup');renderHome();toast('Backup restored!')}catch(e){toast('Backup corrupt hai')}}
-function resetDemo(){if(!pendReset){pendReset=true;return toast('Reset ke liye dubara click karein')}
- pendReset=false;state={vendors:clone(D_VENDORS),rates:clone(D_RATES),custom:[],names:{},accounts:{shop:[],personal:[]},shop:{chips:CHIPS.slice(),entries:[],open:{},openOthers:0}};save();closeModal('m-backup');renderHome();toast('Default data restored!')}
-
-window.addEventListener('resize',()=>{setBanH();const p=document.querySelector('.pg:not(.hidden) .nav');if(p)document.documentElement.style.setProperty('--nav-h',p.offsetHeight+'px')});
-renderHome();refreshItems();
-</script></body></html>
+function parseTable(t){return t.replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l
