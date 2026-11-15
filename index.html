@@ -148,6 +148,16 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 #pg-ud .st td.up{background:#d9d9d9}
 #pg-ud .st td.sv{text-align:center}
 #pg-ud .st td.ud{font-size:11px}
+#pg-sh{background:#f6f4ee}
+#pg-sh:not(.hidden){display:flex;flex-direction:column;height:100vh;height:100dvh}
+#pg-sh .gh{padding:10px 12px}#pg-sh .gh b{font-size:17px}
+#pg-sh .st{flex:1;min-height:0;overflow:auto;margin:6px 10px}
+#pg-sh .st .sc{overflow:visible}
+#pg-sh .st th{position:sticky;top:0;z-index:5;font-size:10px!important;padding:5px 1px!important;background:#fbe3d6;white-space:normal;line-height:1.15}
+#pg-sh .st td.sd{white-space:normal}
+#pg-sh .st th.hn{background:#cfe8c2}
+#pg-sh .st td{padding:4px 3px;font-size:12px}
+#pg-sh .st td.sv{text-align:center}
 @media print{body{background:#fff}.nav,.tb,.ep,.ca,.no-print,.more{display:none!important}.ban{position:static;-webkit-print-color-adjust:exact;print-color-adjust:exact}tr.b1{-webkit-print-color-adjust:exact;print-color-adjust:exact}.sc{overflow:visible}}
 </style></head><body>
 <div class="app">
@@ -159,7 +169,7 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
  <button class="btn-glass" onclick="openModal('m-backup')">⬇ Backup</button></div></header>
  <div class="body">
   <div class="big" onclick="openShop()"><div class="left"><button type="button" class="pen" onpointerdown="penDown(event,'shop')" onpointerup="penUp()" onpointercancel="penUp()" onpointerleave="penUp()" onclick="penTap(event)" oncontextmenu="return false">✎</button><div class="ic">🏪</div><div><h3 id="h-n-shop">Shop Vendors Account</h3><small>Vendors ka baaki</small></div></div><div class="amt mono"><small>Total Baaki</small><span id="h-shop">₹0</span></div></div>
-  <div class="big" onclick="openCash('personal')"><div class="left"><button type="button" class="pen" onpointerdown="penDown(event,'personal')" onpointerup="penUp()" onpointercancel="penUp()" onpointerleave="penUp()" onclick="penTap(event)" oncontextmenu="return false">✎</button><div class="ic">👤</div><div><h3 id="h-n-personal">Personal Account</h3><small>Apna personal hisaab</small></div></div><div class="amt mono"><small>Balance</small><span id="h-personal">₹0</span></div></div>
+  <div class="big" onclick="openCash('personal')"><div class="left"><button type="button" class="pen" onpointerdown="penDown(event,'personal')" onpointerup="penUp()" onpointercancel="penUp()" onpointerleave="penUp()" onclick="penTap(event)" oncontextmenu="return false">✎</button><div class="ic">👤</div><div><h3 id="h-n-personal">Personal Account</h3><small>Apna personal hisaab</small></div></div><div class="amt mono"><small>Total Baaki</small><span id="h-personal">₹0</span></div></div>
   <div class="big" onclick="openVendors()"><div class="left"><button type="button" class="pen" onpointerdown="penDown(event,'vendors')" onpointerup="penUp()" onpointercancel="penUp()" onpointerleave="penUp()" onclick="penTap(event)" oncontextmenu="return false">✎</button><div class="ic">🧾</div><div><h3 id="h-n-vendors">Vendors Accounts</h3><small id="h-vcount">0 vendors</small></div></div><div class="amt mono"><small>Total Baaki</small><span id="h-vendors">₹0</span></div></div>
   <div id="h-custom" style="display:contents"></div>
   <button class="btn-d" style="padding:14px" onclick="openModal('m-acc')">+ Naya Account</button>
@@ -168,7 +178,7 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 
 <!-- PAGE 2A: VENDORS LIST -->
 <div id="pg-vendors" class="pg hidden">
- <div class="nav"><div class="l"><button class="nb" onclick="show('pg-home');renderHome()">← Home</button><div><small>Page 2</small><div class="t">Vendors Accounts</div></div></div>
+ <div class="nav"><div class="l"><button class="nb" onclick="show('pg-home');renderHome()">← Home</button><div><small>Page 2</small><div class="t" id="v-title">Vendors Accounts</div></div></div>
  <div class="mono" style="font-weight:900;color:#fde047" id="v-total">₹0</div></div>
  <div class="tabs"><button id="tb-v" class="tab on" onclick="vTab('v')">Vendors (<span id="vcount">0</span>)</button><button id="tb-r" class="tab" onclick="vTab('r')">Fixed Rate List</button></div>
  <div id="vw-v" class="body">
@@ -241,6 +251,14 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
   <button class="adb" style="grid-column:span 2;padding:8px">Add</button>
  </form><datalist id="ud-nl"></datalist>
 </div>
+<!-- SHEET (personal / custom columns) -->
+<div id="pg-sh" class="pg hidden">
+ <div class="gh"><button class="gb" onclick="show('pg-home');renderHome()">←</button><b id="sh-title"></b><span id="sh-tot" class="mono" style="font-size:13px;font-weight:800;white-space:nowrap"></span><button class="gb" onclick="openImport('sheet')">📥</button></div>
+ <div class="srch"><input id="sh-q" list="sh-nl" placeholder="🔍 Search karein" oninput="renderSheet()" autocomplete="off"/></div>
+ <div class="sinfo" id="sh-info" style="margin-top:4px"></div>
+ <div class="st" id="sh-st"><div class="sc"><table><colgroup id="sh-cg"></colgroup><thead id="sh-th"></thead><tbody id="sh-body"></tbody></table></div></div>
+ <form class="addbar" id="sh-form" style="grid-template-columns:repeat(6,1fr)" onsubmit="addSheet(event)"></form><datalist id="sh-nl"></datalist>
+</div>
 <!-- PAGE 3: VENDOR LEDGER (LAST 30) -->
 <div id="pg-l3" class="pg hidden"></div>
 <!-- PAGE 4: FULL LEDGER -->
@@ -255,12 +273,14 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 <button class="btn-p" style="width:100%;padding:12px" onclick="runImport()">Import Karein</button></div></div>
 
 <div id="m-accren" class="mb hidden"><div class="mc"><div class="mh"><h3>Account ka naam badlein</h3><button class="x" onclick="closeModal('m-accren')">✕</button></div>
-<form onsubmit="saveAccRen(event)"><div class="lf"><label>Naya naam</label><input id="ar-name" class="li" required/></div><div id="ar-catbox" class="lf hidden"><label>Account type (Udhaar Khata chunenge to Excel jaisi sheet khulegi)</label><select id="ar-cat" class="li"><option value="shop">🏪 Shop</option><option value="udhaar">💸 Udhaar Khata (Excel sheet)</option><option value="personal">👤 Personal</option><option value="bank">🏦 Bank</option><option value="ghar">🏠 Ghar</option><option value="other">📒 Other</option></select></div><button class="btn-p" style="width:100%;padding:12px">Save Name</button></form></div></div>
+<form onsubmit="saveAccRen(event)"><div class="lf"><label>Naya naam</label><input id="ar-name" class="li" required/></div><div id="ar-catbox" class="hidden"><div class="lf"><label>Andar ka format</label><select id="ar-fmt" class="li"><option value="cash">Jama / Kharch (cashbook)</option><option value="udhaar">Udhaar sheet</option><option value="personal">Personal sheet</option><option value="sheet">Apne columns (jaisa banaya tha)</option></select></div><div class="lf"><label>Category (icon)</label><select id="ar-cat" class="li"><option value="shop">🏪 Shop</option><option value="udhaar">💸 Udhaar Khata (Excel sheet)</option><option value="personal">👤 Personal</option><option value="bank">🏦 Bank</option><option value="ghar">🏠 Ghar</option><option value="other">📒 Other</option></select></div></div><button class="btn-p" style="width:100%;padding:12px">Save Name</button></form></div></div>
 
 <div id="m-acc" class="mb hidden"><div class="mc"><div class="mh"><h3>Naya Account</h3><button class="x" onclick="closeModal('m-acc')">✕</button></div>
 <form onsubmit="createAcc(event)">
 <div class="lf"><label>Account ka naam *</label><input id="ac-name" class="li" required/></div>
 <div class="lf"><label>Category (icon isi se aayega)</label><select id="ac-cat" class="li"><option value="shop">🏪 Shop</option><option value="udhaar">💸 Udhaar Khata (Excel sheet)</option><option value="personal">👤 Personal</option><option value="bank">🏦 Bank</option><option value="ghar">🏠 Ghar</option><option value="other">📒 Other</option></select></div>
+<div class="lf"><label>Andar ka format</label><select id="ac-fmt" class="li" onchange="fmtChange()"><option value="cash">Jama / Kharch (cashbook)</option><option value="udhaar">Udhaar sheet — Name, Amount, Description, Paid, Net, Date</option><option value="personal">Personal sheet — Name, Amount Given, Description, Amount Received, Date</option><option value="sheet">Apne columns khud banayein</option></select></div>
+<div id="ac-ds" class="lf hidden"><label>Apne columns (Date apne aap lagegi)</label><div id="ds-list"></div><button type="button" class="btn-d" style="margin-top:6px" onclick="dsAdd()">+ Column</button></div>
 <button class="btn-p" style="width:100%;padding:12px">Account Banayein</button></form></div></div>
 
 <div id="m-vendor" class="mb hidden"><div class="mc"><div class="mh"><h3>Add New Vendor</h3><button class="x" onclick="closeModal('m-vendor')">✕</button></div>
@@ -370,24 +390,26 @@ let penT=null,penDone=false,arKey=null;
 function penDown(e,k){e.stopPropagation();penDone=false;clearTimeout(penT);e.currentTarget.classList.add('hold');penT=setTimeout(()=>{penDone=true;penUp();if(navigator.vibrate)navigator.vibrate(30);openAccRen(k)},800)}
 function penUp(){clearTimeout(penT);document.querySelectorAll('.pen.hold').forEach(b=>b.classList.remove('hold'))}
 function penTap(e){e.stopPropagation();if(!penDone)toast('Naam badalne ke liye ✎ ko 1 second dabaye rakhein');penDone=false}
-function openAccRen(k){arKey=k;$('ar-name').value=accName(k);const c0=state.custom.find(a=>a.id===k);$('ar-catbox').classList.toggle('hidden',!c0);if(c0)$('ar-cat').value=c0.cat||'other';openModal('m-accren');setTimeout(()=>{$('ar-name').focus();$('ar-name').select()},50)}
-function saveAccRen(e){e.preventDefault();const n=$('ar-name').value.trim();if(!n)return;const c=state.custom.find(a=>a.id===arKey);if(c){c.name=n;c.cat=$('ar-cat').value}else state.names[arKey]=n;save();closeModal('m-accren');renderHome();toast('Naam badal gaya: '+n)}
+function openAccRen(k){arKey=k;$('ar-name').value=accName(k);const c0=state.custom.find(a=>a.id===k);$('ar-catbox').classList.toggle('hidden',!c0);if(c0){$('ar-cat').value=c0.cat||'other';$('ar-fmt').value=fmtOf(k)}openModal('m-accren');setTimeout(()=>{$('ar-name').focus();$('ar-name').select()},50)}
+function saveAccRen(e){e.preventDefault();const n=$('ar-name').value.trim();if(!n)return;const c=state.custom.find(a=>a.id===arKey);if(c){const nf=$('ar-fmt').value;if(nf==='sheet'&&!(c.cols&&c.cols.length))return toast('Apne columns sirf naya account banate waqt ban sakte hain');c.name=n;c.cat=$('ar-cat').value;c.fmt=nf}else state.names[arKey]=n;save();closeModal('m-accren');renderHome();toast('Naam badal gaya: '+n)}
 function shopTotal(){const c=shopCalc();let t=Number(state.shop.openOthers||0);Object.keys(c.bal).forEach(k=>{t+=c.bal[k]});return Math.round(t*100)/100}
 function renderCustom(){$('h-custom').innerHTML=state.custom.map(a=>{const c=CATS[a.cat]||CATS.other;
- return `<div class="big" onclick="openCash('${a.id}')"><div class="left">${penBtn(a.id)}<div class="ic">${c[0]}</div><div><h3>${esc(a.name)}</h3><small>${c[1]} account</small></div></div><div class="amt mono"><small>${isUd(a.id)?'Total Baaki':'Balance'}</small><span>${inr(accBal(a))}</span></div></div>`}).join('')}
+ return `<div class="big" onclick="openCash('${a.id}')"><div class="left">${penBtn(a.id)}<div class="ic">${c[0]}</div><div><h3>${esc(a.name)}</h3><small>${c[1]} account</small></div></div><div class="amt mono"><small>${accInfo(a.id).l}</small><span>${accInfo(a.id).v}</span></div></div>`}).join('')}
 function createAcc(e){e.preventDefault();const name=$('ac-name').value.trim();if(!name)return;
- const id='a_'+Date.now();state.custom.push({id,name,cat:$('ac-cat').value});state.accounts[id]=[];
- save();closeModal('m-acc');$('ac-name').value='';renderHome();toast(name+' account ban gaya!')}
+ const id='a_'+Date.now();let fmt=$('ac-fmt').value;const cat=$('ac-cat').value;if(fmt==='cash'&&cat==='udhaar')fmt='udhaar';
+ let cols=null;if(fmt==='sheet'){cols=dsCols.filter(c=>c.n.trim()).map(c=>({n:c.n.trim(),t:c.t}));if(!cols.length)return toast('Kam se kam ek column ka naam likhein')}
+ state.custom.push(cols?{id,name,cat,fmt,cols}:{id,name,cat,fmt});state.accounts[id]=[];
+ save();closeModal('m-acc');$('ac-name').value='';$('ac-fmt').value='cash';dsCols=[{n:'',t:'text'}];fmtChange();renderHome();toast(name+' account ban gaya!')}
 function cashBal(k){return (state.accounts[k]||[]).reduce((s,e)=>s+(e.type==='in'?1:-1)*Number(e.amount||0),0)}
 function renderHome(){
  renderCustom();
  ['shop','personal','vendors'].forEach(k=>{$('h-n-'+k).textContent=accName(k)});$('h-shop').textContent=inr(shopTotal());
- $('h-personal').textContent=inr(Math.round(cashBal('personal')*100)/100);
+ $('h-personal').textContent=accInfo('personal').v;
  let t=0;state.vendors.forEach(v=>t+=buildLedger(v).finalBalance);
  $('h-vendors').textContent=inr(t);$('h-vcount').textContent=state.vendors.length+' vendors';}
 
 /* ---------- PAGE 2: VENDORS LIST ---------- */
-function openVendors(){show('pg-vendors');renderVendors();renderRates();refreshItems()}
+function openVendors(){$('v-title').textContent=accName('vendors');show('pg-vendors');renderVendors();renderRates();refreshItems()}
 function vTab(t){$('vw-v').classList.toggle('hidden',t!=='v');$('vw-r').classList.toggle('hidden',t==='v');$('tb-v').classList.toggle('on',t==='v');$('tb-r').classList.toggle('on',t!=='v')}
 function renderVendors(){
  const q=($('vsearch').value||'').toLowerCase().trim();let tot=0;
@@ -415,7 +437,7 @@ function createVendor(e){e.preventDefault();const name=$('vn-name').value.trim()
  renderVendors();openLedger(v.id);toast(name+' ledger created!')}
 
 /* ---------- PAGE 2: CASHBOOK (SHOP / PERSONAL / CUSTOM) ---------- */
-function openCash(k){if(isUd(k))return openUd(k);cashKey=k;$('c-date').value=today();show('pg-cash');renderCash()}
+function openCash(k){if(isUd(k))return openUd(k);if(isSheet(k))return openSheet(k);cashKey=k;$('c-date').value=today();show('pg-cash');renderCash()}
 function renderCash(){
  const nm=accName(cashKey);
  $('c-name').textContent=nm;
@@ -436,7 +458,7 @@ function delCash(id){if(pendDel!==id){pendDel=id;renderCash();return toast('Dele
 /* ---------- PAGE 3 & 4: VENDOR LEDGER ---------- */
 function ledgerPage(n,full){
  return `<div class="nav no-print"><div class="l"><button class="nb" onclick="${full?'backToL3()':'backToVendors()'}">${full?'← Last 30':'← Vendors'}</button><div style="min-width:0"><small>${full?'Page 4 • Full Ledger':'Page 3 • Last '+LIMIT+' Rows'}</small><div class="t" id="p${n}-nm"></div></div></div>
- <div style="display:flex;gap:6px"><button class="nb wa" onclick="shareWA()">WhatsApp</button><button class="nb pdf" onclick="printPDF()">PDF</button></div></div>
+ <div style="display:flex;gap:6px"><button class="nb" onclick="openImport('doc')">📥</button><button class="nb wa" onclick="shareWA()">WhatsApp</button><button class="nb pdf" onclick="printPDF()">PDF</button></div></div>
  <div class="ws"><div class="ban"><div class="a"><h2 id="p${n}-tt"></h2></div><div class="b mono" id="p${n}-bal"></div></div>
  <div class="tb no-print"><span id="p${n}-info"></span><button class="nb" style="background:#e2e8f0;color:#1e293b;padding:4px 8px" onclick="dlCSV()">Export CSV</button></div>
  <div class="sc"><table><thead><tr><th>Date</th><th class="tl">Particular</th><th>Qty</th><th>Rate</th><th>Total</th><th>Received<br/>Amount</th><th>Final<br/>Amount</th><th class="ca no-print">Edit</th></tr></thead><tbody id="p${n}-body"></tbody></table></div>
@@ -651,7 +673,20 @@ function delChip(i){const k=kv(state.shop.chips[i]);state.shop.openOthers=(state
 let udSel=null,udId=null,udKeys=[],udNm={},uidN=0;
 const uid=p=>p+Date.now()+'_'+(++uidN);
 const fmtShort=i=>{if(!i||!i.includes('-'))return i||'';const[y,m,d]=i.split('-');return d+'-'+m+'-'+y.slice(2)};
-const isUd=k=>{const a=state.custom.find(x=>x.id===k);return !!a&&(a.cat==='udhaar'||/udhaar|udhar|उधार/i.test(a.name))};
+const PERS_COLS=[{n:'Name',t:'text'},{n:'Amount Given',t:'num'},{n:'Description',t:'text'},{n:'Amount Received',t:'num'}];
+const cAcc=k=>state.custom.find(x=>x.id===k);
+const fmtOf=k=>{if(k==='personal')return'personal';const a=cAcc(k);if(!a)return'';return a.fmt||((a.cat==='udhaar'||/udhaar|udhar|उधार/i.test(a.name))?'udhaar':'cash')};
+const isUd=k=>fmtOf(k)==='udhaar';
+const isSheet=k=>{const f=fmtOf(k);return f==='personal'||f==='sheet'};
+const colsOf=k=>fmtOf(k)==='personal'?PERS_COLS:((cAcc(k)||{}).cols||[]);
+const shRows=k=>(state.accounts[k]||[]).filter(e=>Array.isArray(e.v));
+function accInfo(k){const f=fmtOf(k);
+ if(f==='udhaar')return{l:'Total Baaki',v:inr(udTotal(k))};
+ if(f==='personal'||f==='sheet'){const cs=colsOf(k),R=shRows(k),ni=cs.map((c,i)=>c.t==='num'?i:-1).filter(i=>i>=0),sum=i=>R.reduce((s,e)=>s+Number(e.v[i]||0),0),r2=n=>Math.round(n*100)/100;
+  if(f==='personal')return{l:'Total Baaki',v:inr(r2(sum(1)-sum(3)))};
+  if(ni.length)return{l:cs[ni[0]].n,v:inr(r2(sum(ni[0])))};
+  return{l:'Entries',v:String(R.length)}}
+ return{l:'Balance',v:inr(Math.round(cashBal(k)*100)/100)}}
 function udCalc(id){const run={};const rows=(state.accounts[id]||[]).filter(e=>e.name!==undefined).map(e=>{const k=kv(e.name);run[k]=Math.round(((run[k]||0)+Number(e.amount||0)-Number(e.paid||0))*100)/100;return{...e,k,net:run[k]}});return{rows,run}}
 function udTotal(id){let t=0;Object.values(udCalc(id).run).forEach(v=>t+=v);return Math.round(t*100)/100}
 const accBal=a=>isUd(a.id)?udTotal(a.id):Math.round(cashBal(a.id)*100)/100;
@@ -684,13 +719,43 @@ function addUd(e){e.preventDefault();let name=$('ud-n').value.trim();if(!name)re
 function delUd(id){if(pendDel!==id){pendDel=id;renderUd();return toast('Delete ke liye dubara "OK?" dabayein')}
  state.accounts[udId]=state.accounts[udId].filter(x=>x.id!==id);pendDel=null;save();renderUd();toast('Entry deleted')}
 
+/* ---------- SHEET FORMAT (personal / apne columns) ---------- */
+let shId=null,dsCols=[{n:'',t:'text'}];
+function fmtChange(){const v=$('ac-fmt').value==='sheet';$('ac-ds').classList.toggle('hidden',!v);if(v)renderDs()}
+function renderDs(){$('ds-list').innerHTML=dsCols.map((c,i)=>`<div style="display:flex;gap:6px;margin-bottom:6px"><input class="li" style="flex:1" placeholder="Column ${i+1} ka naam" value="${esc(c.n)}" oninput="dsCols[${i}].n=this.value"/><select class="li" style="width:96px" onchange="dsCols[${i}].t=this.value"><option value="text"${c.t==='text'?' selected':''}>Text</option><option value="num"${c.t==='num'?' selected':''}>Number</option></select><button type="button" class="ml" style="background:none;color:#94a3b8" onclick="dsDel(${i})">✕</button></div>`).join('')}
+function dsAdd(){dsCols.push({n:'',t:'text'});renderDs()}
+function dsDel(i){if(dsCols.length>1){dsCols.splice(i,1);renderDs()}}
+function shScrollEnd(){const t=$('sh-st');if(t)setTimeout(()=>{t.scrollTop=t.scrollHeight},30)}
+function openSheet(k){shId=k;cashKey=k;$('sh-q').value='';const cs=colsOf(k);
+ $('sh-form').innerHTML=cs.map((c,i)=>`<input id="sh-f${i}" class="ai" ${c.t==='num'?'type="number" step="0.01"':'type="text"'} placeholder="${esc(c.n)}${c.t==='num'?' ₹':''}" autocomplete="off" style="grid-column:span 3"${i===0&&c.t!=='num'?' list="sh-nl"':''}/>`).join('')+'<button class="adb" style="grid-column:span 6;padding:8px">Add</button>';
+ show('pg-sh');renderSheet();shScrollEnd()}
+function renderSheet(){const k=shId,cs=colsOf(k);if(!cs.length)return;
+ $('sh-title').textContent=accName(k);$('sh-tot').textContent=accInfo(k).v;
+ const all=shRows(k),q=kv($('sh-q').value);
+ const rows=q?all.filter(e=>cs.some((c,i)=>c.t!=='num'&&kv(e.v[i]).includes(q))||fmtShort(e.at).includes(q)):all;
+ const wt=cs.map(c=>c.t==='num'?1.5:3).concat([1.7]),sm=wt.reduce((a,b)=>a+b,0);
+ $('sh-cg').innerHTML=wt.map(w=>`<col style="width:${(w/sm*100).toFixed(1)}%">`).join('');
+ $('sh-th').innerHTML='<tr>'+cs.map(c=>`<th class="${c.t==='num'?'hn':''}">${esc(c.n)}</th>`).join('')+'<th>Date</th></tr>';
+ const sums=cs.map((c,i)=>c.t==='num'?Math.round(rows.reduce((s,e)=>s+Number(e.v[i]||0),0)*100)/100:'');
+ $('sh-nl').innerHTML=[...new Set(all.map(e=>e.v[0]).filter(Boolean))].map(n=>`<option value="${esc(n)}">`).join('');
+ $('sh-info').textContent=q?`${rows.length} entries mili (kul ${all.length})`:`Kul ${all.length} entries`;
+ $('sh-body').innerHTML=(rows.map((e,i)=>`<tr class="${i%2?'':'o'}">`+cs.map((c,j)=>`<td class="${c.t==='num'?'':'sv'}">${c.t==='num'?(e.v[j]||''):esc(e.v[j])}</td>`).join('')+`<td class="sd">${fmtShort(e.at)} <button class="ra" onclick="delSheet('${e.id}')">${pendDel===e.id?'OK?':'✕'}</button></td></tr>`).join('')||`<tr><td colspan="${cs.length+1}" style="padding:18px;color:#64748b">Abhi koi entry nahi.</td></tr>`)+(rows.length?'<tr class="tr2">'+cs.map((c,i)=>i===0?'<td class="sv">Kul</td>':`<td>${sums[i]}</td>`).join('')+'<td></td></tr>':'')}
+function addSheet(e){e.preventDefault();const cs=colsOf(shId);
+ const v=cs.map((c,i)=>c.t==='num'?(parseFloat($('sh-f'+i).value)||0):$('sh-f'+i).value.trim());
+ if(!v.some(x=>x))return toast('Kuch to bharein');
+ (state.accounts[shId]||(state.accounts[shId]=[])).push({id:uid('h_'),v,at:today()});
+ cs.forEach((c,i)=>{$('sh-f'+i).value=''});save();renderSheet();shScrollEnd();toast('Entry saved • '+fmtDate(today()))}
+function delSheet(id){if(pendDel!==id){pendDel=id;renderSheet();return toast('Delete ke liye dubara "OK?" dabayein')}
+ state.accounts[shId]=state.accounts[shId].filter(x=>x.id!==id);pendDel=null;save();renderSheet();toast('Entry deleted')}
+
 /* ---------- EXCEL IMPORT ---------- */
 let impType=null;
 const IMP_HELP={
  ud:'Columns ka order: <b>Name, Amount, Description, Paid, (Net — chhod diya jayega)</b>. Header row apne aap skip hogi. Net amount app khud calculate karega.',
  shop:'Columns ka order: <b>Vendor, Bill, Paid, Date</b> (Date optional).',
- cash:'Columns ka order: <b>Date, Particular, Jama, Kharch</b>.'};
-function openImport(t){impType=t;$('imp-help').innerHTML=IMP_HELP[t];$('imp-text').value='';openModal('m-imp')}
+ cash:'Columns ka order: <b>Date, Particular, Jama, Kharch</b>.',
+ doc:'Columns ka order (ledger table jaisa): <b>Date, Particular, Qty (received ho to cash/online), Rate, Total (chhod diya jayega), Received Amount, Final (chhod diya jayega)</b>. Date khali ho to upar wali date maani jayegi. "Previous Balance" wali row ka amount Final column me likhein.'};
+function openImport(t){impType=t;let h=IMP_HELP[t];if(t==='sheet')h='Columns ka order: <b>'+colsOf(cashKey).map(c=>esc(c.n)).join(', ')+'</b>. Header row apne aap skip hogi. Date import wale din ki lagegi.';$('imp-help').innerHTML=h;$('imp-text').value='';openModal('m-imp')}
 function impFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('imp-text').value=ev.target.result};r.readAsText(f);e.target.value=''}
 function parseTable(t){return t.replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l=>{
  if(l.includes('\t'))return l.split('\t').map(x=>x.trim());
@@ -711,13 +776,21 @@ function runImport(){
  else if(t==='shop'){rows.forEach(r=>{let name=(r[0]||'').trim();if(!name||!(isN(r[1])||isN(r[2])))return;const b=nm(r[1]),p=nm(r[2]);if(!b&&!p)return;
    const ch=state.shop.chips.find(c=>kv(c)===kv(name));if(ch)name=ch;else{const ex=state.shop.entries.find(x=>kv(x.vendor)===kv(name));if(ex)name=ex.vendor}
    state.shop.entries.push({id:uid('s_'),vendor:name,bill:b,paid:p,date:pdate(r[3])||today()});n++})}
+ else if(t==='sheet'){const cs=colsOf(cashKey),a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
+  rows.forEach(r=>{if(cs.some((c,i)=>c.t==='num'&&(r[i]||'').trim()&&!isN(r[i])))return;
+   const v=cs.map((c,i)=>c.t==='num'?nm(r[i]):(r[i]||'').trim());if(!v.some(x=>x))return;a.push({id:uid('h_'),v,at:today()});n++})}
+ else if(t==='doc'){const dv=state.vendors.find(x=>x.id===activeV);if(!dv)return toast('Pehle doctor kholein');let ld='';
+  rows.forEach(r=>{const d0=pdate(r[0]);if(d0)ld=d0;const date=ld||today(),p=(r[1]||'').trim();if(!p)return;
+   if(/^(previous|opening)/i.test(p)){const am=nm(r[6])||nm(r[5])||nm(r[3])||nm(r[2]);if(am){dv.entries.push({id:uid('e_'),date,type:'opening',particular:'Previous Balance',openingAmount:am});n++}return}
+   if(isN(r[2])&&isN(r[3])){const q=nm(r[2]),rt=nm(r[3]);if(q>0){dv.entries.push({id:uid('e_'),date,type:'item',particular:p,qty:q,rate:rt});n++}return}
+   if(isN(r[5])&&nm(r[5])>0){dv.entries.push({id:uid('e_'),date,type:'received',particular:'Received Amt',mode:/online/i.test(r[2])?'online':'cash',received:nm(r[5])});n++}})}
  else{const a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
   rows.forEach(r=>{if(!(isN(r[2])||isN(r[3])))return;const d=pdate(r[0])||today(),pt=(r[1]||'').trim(),j=nm(r[2]),k=nm(r[3]);
    if(j>0){a.push({id:uid('c_'),date:d,type:'in',particular:pt,amount:j});n++}
    if(k>0){a.push({id:uid('c_'),date:d,type:'out',particular:pt,amount:k});n++}})}
  if(!n)return toast('Koi sahi row nahi mili — columns ka order check karein');
  save();closeModal('m-imp');$('imp-text').value='';
- if(t==='ud')renderUd();else if(t==='shop'){renderShopAll();scrollShopEnd()}else renderCash();
+ if(t==='ud')renderUd();else if(t==='sheet'){renderSheet();shScrollEnd()}else if(t==='doc')renderLedger();else if(t==='shop'){renderShopAll();scrollShopEnd()}else renderCash();
  toast(n+' entries import ho gayi')}
 
 /* ---------- BACKUP ---------- */
