@@ -141,7 +141,8 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
  <header class="hdr"><div class="row"><div><h1>Billing & Ledger</h1><p>Shop • Personal • Vendors</p></div>
  <button class="btn-glass" onclick="openModal('m-backup')">⬇ Backup</button></div></header>
  <div class="body">
-  <div class="big" onclick="openShop()"><div class="left"><div class="ic">🏪</div><div><h3>Shop Account</h3><small>Dukaan ka hisaab</small></div></div><div class="amt mono"><small>Balance</small><span id="h-shop">₹0</span></div></div>
+  <!-- यहाँ Shop Account की जगह Shop Vendors Account कर दिया गया है जो सीधे कुल बकाया दिखाएगा -->
+  <div class="big" onclick="openShop()"><div class="left"><div class="ic">🏪</div><div><h3>Shop Vendors Account</h3><small>Total Vendors Baaki</small></div></div><div class="amt mono"><small>Total Baaki</small><span id="h-shop">₹0</span></div></div>
   <div class="big" onclick="openCash('personal')"><div class="left"><div class="ic">👤</div><div><h3>Personal Account</h3><small>Apna personal hisaab</small></div></div><div class="amt mono"><small>Balance</small><span id="h-personal">₹0</span></div></div>
   <div class="big" onclick="openVendors()"><div class="left"><div class="ic">🧾</div><div><h3>Vendors Accounts</h3><small id="h-vcount">0 vendors</small></div></div><div class="amt mono"><small>Total Baaki</small><span id="h-vendors">₹0</span></div></div>
   <div id="h-custom" style="display:contents"></div>
@@ -331,6 +332,7 @@ function createAcc(e){e.preventDefault();const name=$('ac-name').value.trim();if
 function cashBal(k){return (state.accounts[k]||[]).reduce((s,e)=>s+(e.type==='in'?1:-1)*Number(e.amount||0),0)}
 function renderHome(){
  renderCustom();
+ // यहाँ Shop Vendors Account का टोटल सीधे shopCalc() के बैलेंस से जोड़ दिया गया है ताकि सही बकाया दिखे
  {const c=shopCalc();let t=0;Object.values(c.bal).forEach(v=>t+=v);$('h-shop').textContent=inr(Math.round(t*100)/100)}
  $('h-personal').textContent=inr(Math.round(cashBal('personal')*100)/100);
  let t=0;state.vendors.forEach(v=>t+=buildLedger(v).finalBalance);
@@ -600,7 +602,7 @@ function delChip(i){const k=kv(state.shop.chips[i]);state.shop.openOthers=(state
 /* ---------- BACKUP ---------- */
 function dlBackup(){dl(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),'Ledger_Backup_'+today()+'.json');toast('Backup downloaded!')}
 function copyBackup(){const t=$('rs-text');t.value=JSON.stringify(state);t.select();try{document.execCommand('copy');toast('Backup text copied!')}catch(e){toast('Box se manually copy karein')}}
-function restoreFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>applyBackup(ev.target.result);r.readAsText(f)}
+function restoreFile(e){$f=e.target.files[0];if(!$f)return;const r=new FileReader();r.onload=ev=>applyBackup(ev.target.result);r.readAsText($f)}
 function restoreText(){const r=$('rs-text').value.trim();if(!r)return toast('Pehle backup text paste karein');applyBackup(r)}
 function applyBackup(raw){try{const p=JSON.parse(raw);if(!p||!Array.isArray(p.vendors)||!Array.isArray(p.rates))return toast('Invalid backup format!');
  state=normShop(p);if(!state.accounts)state.accounts={};['shop','personal'].forEach(k=>{if(!Array.isArray(state.accounts[k]))state.accounts[k]=[]});
