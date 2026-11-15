@@ -332,11 +332,16 @@ function createAcc(e){e.preventDefault();const name=$('ac-name').value.trim();if
 function cashBal(k){return (state.accounts[k]||[]).reduce((s,e)=>s+(e.type==='in'?1:-1)*Number(e.amount||0),0)}
 function renderHome(){
  renderCustom();
- // यहाँ Shop Vendors Account का टोटल सीधे shopCalc() के बैलेंस से जोड़ दिया गया है ताकि सही बकाया दिखे
- {const c=shopCalc();let t=0;Object.values(c.bal).forEach(v=>t+=v);$('h-shop').textContent=inr(Math.round(t*100)/100)}
- $('h-personal').textContent=inr(Math.round(cashBal('personal')*100)/100);
+ {
+   const c = shopCalc();
+   let t = Number(state.shop.openOthers || 0);
+   Object.values(c.bal).forEach(v => t += v);
+   $('h-shop').textContent = inr(Math.round(t * 100) / 100);
+ }
+ $('h-personal').textContent = inr(Math.round(cashBal('personal')*100)/100);
  let t=0;state.vendors.forEach(v=>t+=buildLedger(v).finalBalance);
  $('h-vendors').textContent=inr(t);$('h-vcount').textContent=state.vendors.length+' vendors';}
+
 
 /* ---------- PAGE 2: VENDORS LIST ---------- */
 function openVendors(){show('pg-vendors');renderVendors();renderRates();refreshItems()}
