@@ -191,13 +191,15 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 .clib{width:24px;height:24px;border-radius:50%;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0}
 .clib.e{background:#dbeafe;color:#1d4ed8}.clib.d{background:#fee2e2;color:#dc2626;width:auto;min-width:24px;padding:0 4px;border-radius:12px}
 @media print{body{background:#fff}.nav,.tb,.ep,.ca,.no-print,.more{display:none!important}.ban{position:static;-webkit-print-color-adjust:exact;print-color-adjust:exact}tr.b1{-webkit-print-color-adjust:exact;print-color-adjust:exact}.sc{overflow:visible}#pg-l3 .sc,#pg-l4 .sc,#pg-cash .sc{max-height:none!important;overflow:visible!important}}
-</style></head><body>
+@keyframes bootshow{to{opacity:1}}</style>
+<script>window.onerror=function(m,u,l){var b=document.getElementById('boot');if(b){b.innerHTML='⚠ App chali nahi — error: '+m+' (line '+l+'). File GitHub par poori upload nahi hui ho sakti hai.';b.style.animation='none';b.style.opacity=1}};</script></head><body>
+<div id="boot" style="position:fixed;left:0;right:0;top:0;z-index:99999;background:#e11d48;color:#fff;padding:10px 12px;font:700 13px sans-serif;text-align:center;opacity:0;animation:bootshow .01s 3s forwards">⚠ App poori load nahi hui. GitHub par file adhoori save hui hai ya purani cache me hai — file dobara upload karein, phir app band karke kholein.</div>
 <div class="app">
 <div id="toast" class="toast hidden"></div>
 
 <!-- PAGE 1: HOME -->
 <div id="pg-home" class="pg">
- <header class="hdr"><div class="row"><div><h1>Billing & Ledger</h1><p>Shop • Personal • Doctors • v12</p></div>
+ <header class="hdr"><div class="row"><div><h1>Billing & Ledger</h1><p>Shop • Personal • Doctors • v13</p></div>
  <button class="btn-glass" onclick="openModal('m-backup')">⬇ Backup</button></div></header>
  <div class="body">
   <div class="big" onclick="openShop()"><div class="left"><button type="button" class="pen" onpointerdown="penDown(event,'shop')" onpointerup="penUp()" onpointercancel="penUp()" onpointerleave="penUp()" onclick="penTap(event)" oncontextmenu="return false">✎</button><div class="ic">🏪</div><div><h3 id="h-n-shop">Shop Vendors Account</h3><small>Vendors ka baaki</small></div></div><div class="amt mono"><small>Total Baaki</small><span id="h-shop">₹0</span></div></div>
@@ -416,12 +418,13 @@ const inr=n=>'₹'+Number(n).toLocaleString('en-IN');
 
 let state=load(), activeV=null, cashKey=null, unlocked=new Set(), entryUnlocked=false, pendDel=null, pendReset=false, pendShare=null;
 
-function load(){let s=null;try{const r=localStorage.getItem(KEY);if(r)s=JSON.parse(r)}catch(e){}
+function load(){let s=null,raw=null;try{raw=localStorage.getItem(KEY);if(raw)s=JSON.parse(raw)}catch(e){window.__noSave=!!raw}
+ if(raw&&s){try{localStorage.setItem(KEY+'_prev',raw)}catch(e){}}
  if(!s)s={vendors:clone(D_VENDORS),rates:clone(D_RATES)};
  if(!s.accounts)s.accounts={};
  ['shop','personal'].forEach(k=>{if(!Array.isArray(s.accounts[k]))s.accounts[k]=[]});
  return normShop(s)}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function save(){if(window.__noSave)return;try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
 function esc(v){return v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
 function fmtDate(i){if(!i||!i.includes('-'))return i||'';const[y,m,d]=i.split('-');return d+'-'+m+'-'+y}
 let tt=null;function toast(m){const e=$('toast');e.textContent=m;e.classList.remove('hidden');clearTimeout(tt);tt=setTimeout(()=>e.classList.add('hidden'),2600)}
@@ -910,4 +913,54 @@ const IMP_HELP={
  doc:'Columns ka order (ledger table jaisa): <b>Date, Particular, Qty (received ho to cash/online), Rate, Total (chhod diya jayega), Received Amount, Final (chhod diya jayega)</b>. Date khali ho to upar wali date maani jayegi. "Previous Balance" wali row ka amount Final column me likhein.'};
 function openImport(t){impType=t;let h=IMP_HELP[t];if(t==='sheet')h='Columns ka order: <b>'+colsOf(cashKey).map(c=>esc(c.n)).join(', ')+'</b>. Header row apne aap skip hogi. Date import wale din ki lagegi.';$('imp-help').innerHTML=h;$('imp-text').value='';openModal('m-imp')}
 function impFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('imp-text').value=ev.target.result};r.readAsText(f);e.target.value=''}
-function parseTable(t){return t.replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l
+function parseTable(t){return t.replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l=>{
+ if(l.includes('\t'))return l.split('\t').map(x=>x.trim());
+ const out=[];let cur='',q=false;for(const ch of l){if(ch==='"')q=!q;else if(ch===','&&!q){out.push(cur.trim());cur=''}else cur+=ch}out.push(cur.trim());return out})}
+const isN=v=>/^[₹\s]*-?[\d,]+(\.\d+)?\s*$/.test(String(v||''));
+const nm=v=>{const n=parseFloat(String(v||'').replace(/[₹,\s]/g,''));return isNaN(n)?0:n};
+function pdate(v){v=String(v||'').trim();let m=v.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
+ if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+ m=v.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/);
+ if(m){let y=+m[3];if(y<100)y+=2000;return y+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0')}
+ return ''}
+function runImport(){
+ const rows=parseTable($('imp-text').value);if(!rows.length)return toast('Pehle data paste karein');
+ let n=0;const t=impType;
+ if(t==='ud'){const a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
+  rows.forEach(r=>{const name=(r[0]||'').trim();if(!name||!(isN(r[1])||isN(r[3])))return;const am=nm(r[1]),pd=nm(r[3]);if(!am&&!pd)return;
+   a.push({id:uid('u_'),name,amount:am,desc:(r[2]||'').trim(),paid:pd,at:today()});n++})}
+ else if(t==='shop'){rows.forEach(r=>{let name=(r[0]||'').trim();if(!name||!(isN(r[1])||isN(r[2])))return;const b=nm(r[1]),p=nm(r[2]);if(!b&&!p)return;
+   const ch=state.shop.chips.find(c=>kv(c)===kv(name));if(ch)name=ch;else{const ex=state.shop.entries.find(x=>kv(x.vendor)===kv(name));if(ex)name=ex.vendor}
+   state.shop.entries.push({id:uid('s_'),vendor:name,bill:b,paid:p,date:pdate(r[3])||today()});n++})}
+ else if(t==='sheet'){const cs=colsOf(cashKey),a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
+  rows.forEach(r=>{if(cs.some((c,i)=>c.t==='num'&&(r[i]||'').trim()&&!isN(r[i])))return;
+   const v=cs.map((c,i)=>c.t==='num'?nm(r[i]):(r[i]||'').trim());if(!v.some(x=>x))return;a.push({id:uid('h_'),v,at:today()});n++})}
+ else if(t==='doc'){const dv=state.vendors.find(x=>x.id===activeV);if(!dv)return toast('Pehle doctor kholein');let ld='';
+  rows.forEach(r=>{const d0=pdate(r[0]);if(d0)ld=d0;const date=ld||today(),p=(r[1]||'').trim();if(!p)return;
+   if(/^(previous|opening)/i.test(p)){const am=nm(r[6])||nm(r[5])||nm(r[3])||nm(r[2]);if(am){dv.entries.push({id:uid('e_'),date,type:'opening',particular:'Previous Balance',openingAmount:am});n++}return}
+   if(isN(r[2])&&isN(r[3])){const q=nm(r[2]),rt=nm(r[3]);if(q>0){dv.entries.push({id:uid('e_'),date,type:'item',particular:p,qty:q,rate:rt});n++}return}
+   if(isN(r[5])&&nm(r[5])>0){dv.entries.push({id:uid('e_'),date,type:'received',particular:'Received Amt',mode:/online/i.test(r[2])?'online':'cash',received:nm(r[5])});n++}})}
+ else{const a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
+  rows.forEach(r=>{if(!(isN(r[2])||isN(r[3])))return;const d=pdate(r[0])||today(),pt=(r[1]||'').trim(),j=nm(r[2]),k=nm(r[3]);
+   if(j>0){a.push({id:uid('c_'),date:d,type:'in',particular:pt,amount:j});n++}
+   if(k>0){a.push({id:uid('c_'),date:d,type:'out',particular:pt,amount:k});n++}})}
+ if(!n)return toast('Koi sahi row nahi mili — columns ka order check karein');
+ save();closeModal('m-imp');$('imp-text').value='';
+ if(t==='ud')renderUd();else if(t==='sheet'){renderSheet();shScrollEnd()}else if(t==='doc')renderLedger();else if(t==='shop'){renderShopAll();scrollShopEnd()}else renderCash();
+ toast(n+' entries import ho gayi')}
+
+/* ---------- BACKUP ---------- */
+function dlBackup(){dl(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),'Ledger_Backup_'+today()+'.json');toast('Backup downloaded!')}
+function copyBackup(){const t=$('rs-text');t.value=JSON.stringify(state);t.select();try{document.execCommand('copy');toast('Backup text copied!')}catch(e){toast('Box se manually copy karein')}}
+function restoreFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>applyBackup(ev.target.result);r.readAsText(f)}
+function restoreText(){const r=$('rs-text').value.trim();if(!r)return toast('Pehle backup text paste karein');applyBackup(r)}
+function applyBackup(raw){try{const p=JSON.parse(raw);if(!p||!Array.isArray(p.vendors)||!Array.isArray(p.rates))return toast('Invalid backup format!');
+ state=normShop(p);if(!state.accounts)state.accounts={};['shop','personal'].forEach(k=>{if(!Array.isArray(state.accounts[k]))state.accounts[k]=[]});
+ save();closeModal('m-backup');renderHome();toast('Backup restored!')}catch(e){toast('Backup corrupt hai')}}
+function resetDemo(){if(!pendReset){pendReset=true;return toast('Reset ke liye dubara click karein')}
+ pendReset=false;state={vendors:clone(D_VENDORS),rates:clone(D_RATES),custom:[],names:{},accounts:{shop:[],personal:[]},shop:{chips:CHIPS.slice(),entries:[],open:{},openOthers:0}};save();closeModal('m-backup');renderHome();toast('Default data restored!')}
+
+window.addEventListener('resize',()=>{setBanH();const p=document.querySelector('.pg:not(.hidden) .nav');if(p)document.documentElement.style.setProperty('--nav-h',p.offsetHeight+'px')});
+renderHome();refreshItems();
+try{$('boot').remove()}catch(e){}
+</script></body></html>
