@@ -144,6 +144,8 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
   <div class="big" onclick="openShop()"><div class="left"><div class="ic">🏪</div><div><h3>Shop Account</h3><small>Dukaan ka hisaab</small></div></div><div class="amt mono"><small>Balance</small><span id="h-shop">₹0</span></div></div>
   <div class="big" onclick="openCash('personal')"><div class="left"><div class="ic">👤</div><div><h3>Personal Account</h3><small>Apna personal hisaab</small></div></div><div class="amt mono"><small>Balance</small><span id="h-personal">₹0</span></div></div>
   <div class="big" onclick="openVendors()"><div class="left"><div class="ic">🧾</div><div><h3>Vendors Accounts</h3><small id="h-vcount">0 vendors</small></div></div><div class="amt mono"><small>Total Baaki</small><span id="h-vendors">₹0</span></div></div>
+  <div id="h-custom" style="display:contents"></div>
+  <button class="btn-d" style="padding:14px" onclick="openModal('m-acc')">+ Naya Account</button>
  </div>
 </div>
 
@@ -213,6 +215,12 @@ tr.b1{background:var(--xb)}tr.b0{background:#fff}tr.sep{height:18px}
 <div id="pg-l4" class="pg hidden"></div>
 
 <datalist id="items"></datalist>
+
+<div id="m-acc" class="mb hidden"><div class="mc"><div class="mh"><h3>Naya Account</h3><button class="x" onclick="closeModal('m-acc')">✕</button></div>
+<form onsubmit="createAcc(event)">
+<div class="lf"><label>Account ka naam *</label><input id="ac-name" class="li" required/></div>
+<div class="lf"><label>Category (icon isi se aayega)</label><select id="ac-cat" class="li"><option value="shop">🏪 Shop</option><option value="udhaar">💸 Udhaar</option><option value="personal">👤 Personal</option><option value="bank">🏦 Bank</option><option value="ghar">🏠 Ghar</option><option value="other">📒 Other</option></select></div>
+<button class="btn-p" style="width:100%;padding:12px">Account Banayein</button></form></div></div>
 
 <div id="m-vendor" class="mb hidden"><div class="mc"><div class="mh"><h3>Add New Vendor</h3><button class="x" onclick="closeModal('m-vendor')">✕</button></div>
 <form onsubmit="createVendor(event)">
@@ -313,8 +321,16 @@ function buildLedger(v){
  return{rows,finalBalance:run,lastDate:last?fmtDate(last):'No entries'}}
 
 /* ---------- HOME ---------- */
-function cashBal(k){return state.accounts[k].reduce((s,e)=>s+(e.type==='in'?1:-1)*Number(e.amount||0),0)}
+const CATS={shop:['🏪','Shop'],udhaar:['💸','Udhaar'],personal:['👤','Personal'],bank:['🏦','Bank'],ghar:['🏠','Ghar'],other:['📒','Other']};
+const accName=k=>k==='shop'?'Shop Account':k==='personal'?'Personal Account':((state.custom.find(a=>a.id===k)||{}).name||'Account');
+function renderCustom(){$('h-custom').innerHTML=state.custom.map(a=>{const c=CATS[a.cat]||CATS.other;
+ return `<div class="big" onclick="openCash('${a.id}')"><div class="left"><div class="ic">${c[0]}</div><div><h3>${esc(a.name)}</h3><small>${c[1]} account</small></div></div><div class="amt mono"><small>Balance</small><span>${inr(Math.round(cashBal(a.id)*100)/100)}</span></div></div>`}).join('')}
+function createAcc(e){e.preventDefault();const name=$('ac-name').value.trim();if(!name)return;
+ const id='a_'+Date.now();state.custom.push({id,name,cat:$('ac-cat').value});state.accounts[id]=[];
+ save();closeModal('m-acc');$('ac-name').value='';renderHome();toast(name+' account ban gaya!')}
+function cashBal(k){return (state.accounts[k]||[]).reduce((s,e)=>s+(e.type==='in'?1:-1)*Number(e.amount||0),0)}
 function renderHome(){
+ renderCustom();
  {const c=shopCalc();let t=0;Object.values(c.bal).forEach(v=>t+=v);$('h-shop').textContent=inr(Math.round(t*100)/100)}
  $('h-personal').textContent=inr(Math.round(cashBal('personal')*100)/100);
  let t=0;state.vendors.forEach(v=>t+=buildLedger(v).finalBalance);
@@ -348,18 +364,19 @@ function createVendor(e){e.preventDefault();const name=$('vn-name').value.trim()
  state.vendors.unshift(v);save();closeModal('m-vendor');$('vn-name').value='';$('vn-phone').value='';$('vn-bal').value='0';
  renderVendors();openLedger(v.id);toast(name+' ledger created!')}
 
-/* ---------- PAGE 2: CASHBOOK (SHOP / PERSONAL) ---------- */
+/* ---------- PAGE 2: CASHBOOK (SHOP / PERSONAL / CUSTOM) ---------- */
 function openCash(k){cashKey=k;$('c-date').value=today();show('pg-cash');renderCash()}
 function renderCash(){
- const nm=cashKey==='shop'?'Shop Account':'Personal Account';
+ const nm=accName(cashKey);
  $('c-name').textContent=nm;
+ if(!state.accounts[cashKey])state.accounts[cashKey]=[];
  const list=state.accounts[cashKey].map((e,i)=>({...e,_o:i})).sort((a,b)=>a.date===b.date?a._o-b._o:a.date.localeCompare(b.date));
  let run=0,html='',i=0;
  list.forEach((e,idx)=>{run+=(e.type==='in'?1:-1)*Number(e.amount);run=Math.round(run*100)/100;i++;
   const dt=idx===0||list[idx-1].date!==e.date?fmtDate(e.date):'';
   html+=`<tr class="${i%2?'b1':'b0'}"><td class="cd">${dt}</td><td class="cp">${esc(e.particular)}</td><td class="cn mono">${e.type==='in'?e.amount:''}</td><td class="cn mono">${e.type==='out'?e.amount:''}</td><td class="cf mono">${run}</td><td class="ca no-print"><button class="ra" onclick="delCash('${e.id}')">${pendDel===e.id?'OK?':'✕'}</button></td></tr>`});
  for(let k=0;k<3;k++)html+=`<tr class="sep ${(i+k)%2?'b1':'b0'}"><td></td><td></td><td></td><td></td><td></td><td class="no-print"></td></tr>`;
- $('c-body').innerHTML=html;$('c-bal').textContent=run;$('c-title').innerHTML=nm+',<br/>final balance'}
+ $('c-body').innerHTML=html;$('c-bal').textContent=run;$('c-title').innerHTML=esc(nm)+',<br/>final balance'}
 function addCash(e){e.preventDefault();const amt=parseFloat($('c-amt').value);if(isNaN(amt)||amt<=0)return toast('Sahi amount bharein');
  state.accounts[cashKey].push({id:'c_'+Date.now(),date:$('c-date').value,type:$('c-type').value,particular:$('c-part').value.trim(),amount:amt});
  $('c-part').value='';$('c-amt').value='';save();renderCash();toast('Entry saved!')}
@@ -498,7 +515,8 @@ function dlCSV(){const v=state.vendors.find(x=>x.id===activeV);if(!v)return;cons
  dl(new Blob([out.map(r=>r.join(',')).join('\n')],{type:'text/csv;charset=utf-8;'}),v.name.replace(/[^a-z0-9]/gi,'_')+'_Ledger.csv');toast('CSV downloaded!')}
 
 /* ---------- SHOP (VENDOR LEDGER) ---------- */
-function normShop(s){if(!s.shop||!Array.isArray(s.shop.entries))s.shop={chips:CHIPS.slice(),entries:[]};if(!Array.isArray(s.shop.chips)||s.shop.chips.join('|')==='Ameeni|Ashu|Zakir|Shariq|Bilal|PK|Neelkanth')s.shop.chips=CHIPS.slice();if(!s.shop.open||typeof s.shop.open!=='object')s.shop.open={};if(typeof s.shop.openOthers!=='number')s.shop.openOthers=0;return s}
+function normShop(s){if(!Array.isArray(s.custom))s.custom=[];if(!s.accounts)s.accounts={};s.custom.forEach(c=>{if(!Array.isArray(s.accounts[c.id]))s.accounts[c.id]=[]});
+ if(!s.shop||!Array.isArray(s.shop.entries))s.shop={chips:CHIPS.slice(),entries:[]};if(!Array.isArray(s.shop.chips)||s.shop.chips.join('|')==='Ameeni|Ashu|Zakir|Shariq|Bilal|PK|Neelkanth')s.shop.chips=CHIPS.slice();if(!s.shop.open||typeof s.shop.open!=='object')s.shop.open={};if(typeof s.shop.openOthers!=='number')s.shop.openOthers=0;return s}
 const kv=n=>String(n||'').trim().toLowerCase().replace(/\s+/g,' ');
 const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const fn=n=>Number(n).toLocaleString('en-IN');
@@ -588,7 +606,7 @@ function applyBackup(raw){try{const p=JSON.parse(raw);if(!p||!Array.isArray(p.ve
  state=normShop(p);if(!state.accounts)state.accounts={};['shop','personal'].forEach(k=>{if(!Array.isArray(state.accounts[k]))state.accounts[k]=[]});
  save();closeModal('m-backup');renderHome();toast('Backup restored!')}catch(e){toast('Backup corrupt hai')}}
 function resetDemo(){if(!pendReset){pendReset=true;return toast('Reset ke liye dubara click karein')}
- pendReset=false;state={vendors:clone(D_VENDORS),rates:clone(D_RATES),accounts:{shop:[],personal:[]},shop:{chips:CHIPS.slice(),entries:[],open:{},openOthers:0}};save();closeModal('m-backup');renderHome();toast('Default data restored!')}
+ pendReset=false;state={vendors:clone(D_VENDORS),rates:clone(D_RATES),custom:[],accounts:{shop:[],personal:[]},shop:{chips:CHIPS.slice(),entries:[],open:{},openOthers:0}};save();closeModal('m-backup');renderHome();toast('Default data restored!')}
 
 window.addEventListener('resize',()=>{const p=document.querySelector('.pg:not(.hidden) .nav');if(p)document.documentElement.style.setProperty('--nav-h',p.offsetHeight+'px')});
 renderHome();refreshItems();
