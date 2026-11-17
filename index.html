@@ -901,4 +901,106 @@ async function clImg(){const v=cv();if(!v)return;toast('Image ban rahi hai...');
   x.fillStyle='#fff';x.fillRect(tx,ty,bw,th);
   x.fillStyle='#1e3a8a';x.fillRect(tx,ty,bw,hh);
   const hd=[['Products'],['Net Qty','in (tab)'],['MRP','per tab'],['Total','Amount'],['Net Amount','('+C.pct+'% of MRP)']];
-  x.fillStyle='#fff';x.font=`800 12px ${fam}`;hd.forEach((l,i)=
+  x.fillStyle='#fff';x.font=`800 12px ${fam}`;hd.forEach((l,i)=>l.forEach((t,j)=>x.fillText(t,cx[i]+cw[i]/2,ty+hh/2+(j-(l.length-1)/2)*15)));
+  let sn=0,st=0,sa=0;
+  C.rows.forEach((r,i)=>{const y=ty+hh+i*rh;sn+=r.net;st+=r.total;sa+=r.na;x.fillStyle=i%2?'#dcfce7':'#fff';x.fillRect(tx,y,bw,rh);
+   x.fillStyle='#0f172a';x.textAlign='left';const nf=fitFont(x,r.p.name,700,13,fam,cw[0]-12);x.font=`700 ${nf}px ${fam}`;x.fillText(r.p.name,cx[0]+6,y+rh/2);
+   x.textAlign='center';x.font=`700 13px ${fam}`;[r.net,r.p.mrp,r.total,r.na].forEach((t,k)=>x.fillText(String(t),cx[k+1]+cw[k+1]/2,y+rh/2))});
+  const yt=ty+hh+n*rh;x.fillStyle='#14532d';x.fillRect(tx,yt,bw,rh);x.fillStyle='#fff';x.textAlign='left';x.font=`900 13px ${fam}`;x.fillText('Total',cx[0]+6,yt+rh/2);
+  x.textAlign='center';[rd2(sn),'',rd2(st),rd2(sa)].forEach((t,k)=>x.fillText(String(t),cx[k+1]+cw[k+1]/2,yt+rh/2));
+  x.strokeStyle='#7f9aa0';x.lineWidth=1;for(let i=0;i<=n+1;i++){const y=ty+hh+i*rh+.5;x.beginPath();x.moveTo(tx,y);x.lineTo(tx+bw,y);x.stroke()}
+  for(let k=1;k<5;k++){x.beginPath();x.moveTo(cx[k]+.5,ty);x.lineTo(cx[k]+.5,ty+th);x.stroke()}
+  x.strokeStyle='#1e3a8a';x.lineWidth=2;x.strokeRect(tx+1,ty+1,bw-2,th-2);
+  const blob=await new Promise(r=>cvs.toBlob(r,'image/jpeg',.95));
+  dl(blob,v.name.replace(/[^a-z0-9]/gi,'_')+'_'+today()+'.jpg');toast('Image save ho gayi')}catch(err){toast('Image banane me dikkat aayi')}}
+
+/* ---------- RATE SHEET (Sunwin jaise suppliers) ---------- */
+let plOpen=false;
+const RATE_FORM=`<input id="rf-n" class="ai" list="sh-nl" placeholder="Products" autocomplete="off" style="grid-column:span 3"/>
+<input id="rf-r" class="ai" type="number" step="0.01" inputmode="decimal" placeholder="Rate ₹ (copy kiya hua)" oninput="rfCalc()" style="grid-column:span 3"/>
+<select id="rf-g" class="ai" onchange="rfCalc()" style="grid-column:span 2"><option value="5">GST 5%</option><option value="18">GST 18%</option></select>
+<input id="rf-q" class="ai" type="number" step="0.01" inputmode="decimal" placeholder="Qty." style="grid-column:span 4"/>
+<input id="rf-nr" class="ai" readonly placeholder="Net rate (auto)" style="grid-column:span 3;background:#eef2f3"/>
+<input id="rf-p" class="ai" readonly placeholder="Price (auto)" style="grid-column:span 3;background:#eef2f3"/>
+<button class="adb" style="grid-column:span 6;padding:8px">Add</button>`;
+function rfParams(k){const rf=(cAcc(k)||{}).rf||{};return{add:rf.add!=null?Number(rf.add):3,mp:rf.mp!=null?Number(rf.mp):20}}
+function rfCompute(rate,g,k){const P=rfParams(k),r2=n=>Math.round(n*100)/100,net=r2(rate*(1+g/100));return{net,price:r2((net+P.add)*(1+P.mp/100))}}
+function rfCalc(){const r=parseFloat($('rf-r').value),g=parseFloat($('rf-g').value)||5;if(isNaN(r)){$('rf-nr').value='';$('rf-p').value='';return}const c=rfCompute(r,g,shId);$('rf-nr').value=c.net;$('rf-p').value=c.price}
+function addRateEntry(e){e.preventDefault();let name=$('rf-n').value.trim();const rate=parseFloat($('rf-r').value);
+ if(!name)return toast('Product ka naam bharein');if(isNaN(rate)||rate<=0)return toast('Rate bharein');
+ const g=parseFloat($('rf-g').value)||5,q=parseFloat($('rf-q').value)||0,c=rfCompute(rate,g,shId),ex=shRows(shId).find(x=>kv(x.v[0])===kv(name));if(ex)name=ex.v[0];
+ (state.accounts[shId]||(state.accounts[shId]=[])).push({id:uid('h_'),v:[name,c.net,c.price,rate,q],at:today(),g});
+ ['rf-n','rf-r','rf-q','rf-nr','rf-p'].forEach(i=>{$(i).value=''});save();renderSheet();shScrollEnd();toast('Entry saved • '+fmtDate(today()))}
+function plItems(k){const m=new Map();shRows(k).forEach(e=>{m.set(kv(e.v[0]),e)});return[...m.values()].sort((a,b)=>String(a.v[0]).localeCompare(String(b.v[0])))}
+function renderPl(){const on=fmtOf(shId)==='rate';$('sh-pl').classList.toggle('hidden',!on);if(!on)return;
+ const L=plItems(shId),P=rfParams(shId);$('pl-t').textContent=`📋 Product List (${L.length})`;$('pl-a').textContent=plOpen?'▲':'▼';$('pl-body').classList.toggle('hidden',!plOpen);
+ if(plOpen)$('pl-body').innerHTML=`<div style="padding:8px 10px;font-size:11px;color:#475569;display:flex;justify-content:space-between;align-items:center;gap:6px"><span>Net = Rate + GST • Price = (Net + ₹${P.add}) + ${P.mp}%</span><button class="ml" onclick="openRf()">⚙ badlein</button></div><table><thead><tr><th style="width:34%">Product</th><th>Rate</th><th>Net rate</th><th>Price</th></tr></thead><tbody>`+(L.map((e,i)=>`<tr onclick="plPick(${i})" style="cursor:pointer"><td class="sv">${esc(e.v[0])}<br><small style="color:#64748b">GST ${e.g||5}%</small></td><td>${e.v[3]}</td><td>${e.v[1]}</td><td>${e.v[2]}</td></tr>`).join('')||'<tr><td colspan="4" style="padding:14px;color:#64748b">Abhi koi product nahi</td></tr>')+'</tbody></table>'}
+function plToggle(){plOpen=!plOpen;renderPl()}
+function plPick(i){const e=plItems(shId)[i];if(!e)return;$('rf-n').value=e.v[0];$('rf-r').value=e.v[3];$('rf-g').value=Number(e.g)===18?'18':'5';rfCalc();plOpen=false;renderPl();setTimeout(()=>$('rf-q').focus(),50);toast(e.v[0]+' chuna — Qty bharein')}
+function openRf(){const P=rfParams(shId);$('rf-add').value=P.add;$('rf-mp').value=P.mp;openModal('m-rf')}
+function saveRf(e){e.preventDefault();const a=cAcc(shId);if(!a)return;a.rf={add:parseFloat($('rf-add').value)||0,mp:parseFloat($('rf-mp').value)||0};save();closeModal('m-rf');rfCalc();renderSheet();toast('Formula save ho gaya')}
+
+/* ---------- EXCEL IMPORT ---------- */
+let impType=null;
+const IMP_HELP={
+ ud:'Columns ka order: <b>Name, Amount, Description, Paid, (Net — chhod diya jayega)</b>. Header row apne aap skip hogi. Net amount app khud calculate karega.',
+ shop:'Columns ka order: <b>Vendor, Bill, Paid, Date</b> (Date optional).',
+ cash:'Columns ka order: <b>Date, Particular, Jama, Kharch</b>.',
+ doc:'Columns ka order (ledger table jaisa): <b>Date, Particular, Qty (received ho to cash/online), Rate, Total (chhod diya jayega), Received Amount, Final (chhod diya jayega)</b>. Date khali ho to upar wali date maani jayegi. "Previous Balance" wali row ka amount Final column me likhein.'};
+function openImport(t){impType=t;let h=IMP_HELP[t];if(t==='sheet'&&fmtOf(cashKey)==='rate')h='Columns ka order: <b>Products, Rate, GST % (5 ya 18; khali = 5), Qty.</b> Net rate aur Price app khud nikalega. Header row apne aap skip hogi.';else if(t==='sheet')h='Columns ka order: <b>'+colsOf(cashKey).map(c=>esc(c.n)).join(', ')+'</b>. Header row apne aap skip hogi. Date import wale din ki lagegi.';$('imp-help').innerHTML=h;$('imp-text').value='';openModal('m-imp')}
+function impFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{$('imp-text').value=ev.target.result};r.readAsText(f);e.target.value=''}
+function parseTable(t){return t.replace(/\r/g,'').split('\n').filter(l=>l.trim()).map(l=>{
+ if(l.includes('\t'))return l.split('\t').map(x=>x.trim());
+ const out=[];let cur='',q=false;for(const ch of l){if(ch==='"')q=!q;else if(ch===','&&!q){out.push(cur.trim());cur=''}else cur+=ch}out.push(cur.trim());return out})}
+const isN=v=>/^[₹\s]*-?[\d,]+(\.\d+)?\s*$/.test(String(v||''));
+const nm=v=>{const n=parseFloat(String(v||'').replace(/[₹,\s]/g,''));return isNaN(n)?0:n};
+function pdate(v){v=String(v||'').trim();let m=v.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
+ if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+ m=v.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/);
+ if(m){let y=+m[3];if(y<100)y+=2000;return y+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0')}
+ return ''}
+function runImport(){
+ const rows=parseTable($('imp-text').value);if(!rows.length)return toast('Pehle data paste karein');
+ let n=0;const t=impType;
+ if(t==='ud'){const a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
+  rows.forEach(r=>{const name=(r[0]||'').trim();if(!name||!(isN(r[1])||isN(r[3])))return;const am=nm(r[1]),pd=nm(r[3]);if(!am&&!pd)return;
+   a.push({id:uid('u_'),name,amount:am,desc:(r[2]||'').trim(),paid:pd,at:today()});n++})}
+ else if(t==='shop'){rows.forEach(r=>{let name=(r[0]||'').trim();if(!name||!(isN(r[1])||isN(r[2])))return;const b=nm(r[1]),p=nm(r[2]);if(!b&&!p)return;
+   const ch=state.shop.chips.find(c=>kv(c)===kv(name));if(ch)name=ch;else{const ex=state.shop.entries.find(x=>kv(x.vendor)===kv(name));if(ex)name=ex.vendor}
+   state.shop.entries.push({id:uid('s_'),vendor:name,bill:b,paid:p,date:pdate(r[3])||today()});n++})}
+ else if(t==='sheet'&&fmtOf(cashKey)==='rate'){const a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
+  rows.forEach(r=>{const name=(r[0]||'').trim();if(!name||!isN(r[1]))return;const rate=nm(r[1]),g=isN(r[2])&&nm(r[2])>0?nm(r[2]):5,q=isN(r[3])?nm(r[3]):0,c=rfCompute(rate,g,cashKey);
+   a.push({id:uid('h_'),v:[name,c.net,c.price,rate,q],at:today(),g});n++})}
+ else if(t==='sheet'){const cs=colsOf(cashKey),a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
+  rows.forEach(r=>{if(cs.some((c,i)=>c.t==='num'&&(r[i]||'').trim()&&!isN(r[i])))return;
+   const v=cs.map((c,i)=>c.t==='num'?nm(r[i]):(r[i]||'').trim());if(!v.some(x=>x))return;a.push({id:uid('h_'),v,at:today()});n++})}
+ else if(t==='doc'){const dv=state.vendors.find(x=>x.id===activeV);if(!dv)return toast('Pehle doctor kholein');let ld='';
+  rows.forEach(r=>{const d0=pdate(r[0]);if(d0)ld=d0;const date=ld||today(),p=(r[1]||'').trim();if(!p)return;
+   if(/^(previous|opening)/i.test(p)){const am=nm(r[6])||nm(r[5])||nm(r[3])||nm(r[2]);if(am){dv.entries.push({id:uid('e_'),date,type:'opening',particular:'Previous Balance',openingAmount:am});n++}return}
+   if(isN(r[2])&&isN(r[3])){const q=nm(r[2]),rt=nm(r[3]);if(q>0){dv.entries.push({id:uid('e_'),date,type:'item',particular:p,qty:q,rate:rt});n++}return}
+   if(isN(r[5])&&nm(r[5])>0){dv.entries.push({id:uid('e_'),date,type:'received',particular:'Received Amt',mode:/online/i.test(r[2])?'online':'cash',received:nm(r[5])});n++}})}
+ else{const a=state.accounts[cashKey]||(state.accounts[cashKey]=[]);
+  rows.forEach(r=>{if(!(isN(r[2])||isN(r[3])))return;const d=pdate(r[0])||today(),pt=(r[1]||'').trim(),j=nm(r[2]),k=nm(r[3]);
+   if(j>0){a.push({id:uid('c_'),date:d,type:'in',particular:pt,amount:j});n++}
+   if(k>0){a.push({id:uid('c_'),date:d,type:'out',particular:pt,amount:k});n++}})}
+ if(!n)return toast('Koi sahi row nahi mili — columns ka order check karein');
+ save();closeModal('m-imp');$('imp-text').value='';
+ if(t==='ud')renderUd();else if(t==='sheet'){renderSheet();shScrollEnd()}else if(t==='doc')renderLedger();else if(t==='shop'){renderShopAll();scrollShopEnd()}else renderCash();
+ toast(n+' entries import ho gayi')}
+
+/* ---------- BACKUP ---------- */
+function dlBackup(){dl(new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),'Ledger_Backup_'+today()+'.json');toast('Backup downloaded!')}
+function copyBackup(){const t=$('rs-text');t.value=JSON.stringify(state);t.select();try{document.execCommand('copy');toast('Backup text copied!')}catch(e){toast('Box se manually copy karein')}}
+function restoreFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>applyBackup(ev.target.result);r.readAsText(f)}
+function restoreText(){const r=$('rs-text').value.trim();if(!r)return toast('Pehle backup text paste karein');applyBackup(r)}
+function applyBackup(raw){try{const p=JSON.parse(raw);if(!p||!Array.isArray(p.vendors)||!Array.isArray(p.rates))return toast('Invalid backup format!');
+ state=normShop(p);if(!state.accounts)state.accounts={};['shop','personal'].forEach(k=>{if(!Array.isArray(state.accounts[k]))state.accounts[k]=[]});
+ save();closeModal('m-backup');renderHome();toast('Backup restored!')}catch(e){toast('Backup corrupt hai')}}
+function resetDemo(){if(!pendReset){pendReset=true;return toast('Reset ke liye dubara click karein')}
+ pendReset=false;state={vendors:clone(D_VENDORS),rates:clone(D_RATES),custom:[],names:{},accounts:{shop:[],personal:[]},shop:{chips:CHIPS.slice(),entries:[],open:{},openOthers:0}};save();closeModal('m-backup');renderHome();toast('Default data restored!')}
+
+window.addEventListener('resize',()=>{setBanH();const p=document.querySelector('.pg:not(.hidden) .nav');if(p)document.documentElement.style.setProperty('--nav-h',p.offsetHeight+'px')});
+renderHome();refreshItems();
+try{$('boot').remove()}catch(e){}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})})}
+</script></body></html>
