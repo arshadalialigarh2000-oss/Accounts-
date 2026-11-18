@@ -174,6 +174,8 @@ tr.b1{background:#e8f0fe}tr.b0{background:#fff}tr.sep{height:18px}
 #pg-l3 .sc,#pg-l4 .sc,#pg-cash .sc{overflow:auto;max-height:calc(100vh - var(--nav-h) - var(--ban-h,90px) - 70px);max-height:calc(100dvh - var(--nav-h) - var(--ban-h,90px) - 70px)}
 #pg-l3 th,#pg-l4 th,#pg-cash th{position:sticky;top:0;z-index:30;background:#1e3a8a;color:#fff}
 .ai[readonly]{background:#eef2ff;color:#1e3a8a}
+#pg-ud .st table{width:135%}
+#pg-sh.rate .st th,#pg-sh.rate .st td{padding-left:6px;padding-right:6px}
 @media print{body{background:#fff}.nav,.tb,.ep,.ca,.no-print,.more{display:none!important}.ban{position:static;-webkit-print-color-adjust:exact;print-color-adjust:exact}tr.b1{-webkit-print-color-adjust:exact;print-color-adjust:exact}.sc{overflow:visible}#pg-l3 .sc,#pg-l4 .sc,#pg-cash .sc{max-height:none!important;overflow:visible!important}}
 @keyframes bootshow{to{opacity:1}}
 </style>
@@ -262,7 +264,7 @@ tr.b1{background:#e8f0fe}tr.b0{background:#fff}tr.sep{height:18px}
  <div class="srch"><input id="ud-q" list="ud-nl" placeholder="🔍 Naam search karein" oninput="udInput()" autocomplete="off"/></div>
  <div id="ud-sug" class="chips hidden" style="grid-template-columns:1fr;max-height:50vh;overflow:auto"></div>
  <div class="sinfo" id="ud-info" style="margin-top:4px"></div>
- <div class="st" id="ud-st"><div class="sc"><table><colgroup><col style="width:25%"><col style="width:13%"><col style="width:21%"><col style="width:13%"><col style="width:14%"><col style="width:14%"></colgroup><thead><tr><th class="h1">Name</th><th class="h2">Amount</th><th class="h1">Description</th><th class="h3">Paid<br>Amount</th><th class="h1">Net<br>amount</th><th class="h1">Date</th></tr></thead><tbody id="ud-body"></tbody></table></div></div>
+ <div class="st" id="ud-st"><div class="sc"><table><colgroup><col style="width:19%"><col style="width:10%"><col style="width:25%"><col style="width:10%"><col style="width:10%"><col style="width:16%"><col style="width:10%"></colgroup><thead><tr><th class="h1">Name</th><th class="h2">Amount</th><th class="h1">Description</th><th class="h3">Paid<br>Amount</th><th class="h1">Net<br>amount</th><th class="h1">Date</th><th class="h1"></th></tr></thead><tbody id="ud-body"></tbody></table></div></div>
  <form class="addbar" style="grid-template-columns:repeat(6,1fr)" onsubmit="addUd(event)">
   <input id="ud-n" class="ai" list="ud-nl" placeholder="Name" autocomplete="off" style="grid-column:span 3"/>
   <input id="ud-d" class="ai" placeholder="Description" style="grid-column:span 3"/>
@@ -691,7 +693,7 @@ function udTotal(id){let t=0;Object.values(udCalc(id).run).forEach(v=>t+=v);retu
 function openUd(k){udId=k;cashKey=k;$('ud-q').value='';show('pg-ud');renderUd();udScrollEnd()}
 function udScrollEnd(){const t=$('ud-st');if(t)setTimeout(()=>{t.scrollTop=t.scrollHeight},30)}
 function udInput(){renderUd()}
-function udRow(e,i){return `<tr class="${i%2?'':'o'}"><td class="sv">${esc(e.name)}</td><td class="ua">${e.amount||''}</td><td class="sv ud">${esc(e.desc)}</td><td class="up">${e.paid||''}</td><td class="sr ${e.net<0?'neg':''}">${e.net}</td><td class="sd">${fmtShort(e.at)} <button class="ra" onclick="delUd('${e.id}')">${pendDel===e.id?'OK?':'✕'}</button></td></tr>`}
+function udRow(e,i){return `<tr class="${i%2?'':'o'}"><td class="sv">${esc(e.name)}</td><td class="ua">${e.amount||''}</td><td class="sv ud">${esc(e.desc)}</td><td class="up">${e.paid||''}</td><td class="sr ${e.net<0?'neg':''}">${e.net}</td><td class="sd">${fmtShort(e.at)}</td><td class="sd"><button class="ra" onclick="delUd('${e.id}')">${pendDel===e.id?'OK?':'✕'}</button></td></tr>`}
 function renderUd(){
  const a=state.custom.find(x=>x.id===udId);if(!a)return;
  const{rows,run}=udCalc(udId);const udNm={};rows.forEach(r=>{if(!udNm[r.k])udNm[r.k]=r.name});
@@ -702,10 +704,10 @@ function renderUd(){
  if(q){const mk=Object.keys(udNm).filter(k=>k.includes(q));list=rows.filter(r=>mk.includes(r.k));
   if(mk.length===1){const k=mk[0];let sa=0,sp=0;list.forEach(r=>{sa+=Number(r.amount||0);sp+=Number(r.paid||0)});
    info=`${udNm[k]} • ${list.length} entries • Baaki ₹${fn(run[k])}`;
-   tr=`<tr class="tr2"><td class="sv">Kul</td><td>${rd2(sa)}</td><td></td><td>${rd2(sp)}</td><td class="${run[k]<0?'neg':''}">${run[k]}</td><td></td></tr>`}
+   tr=`<tr class="tr2"><td class="sv">Kul</td><td>${rd2(sa)}</td><td></td><td>${rd2(sp)}</td><td class="${run[k]<0?'neg':''}">${run[k]}</td><td></td><td></td></tr>`}
   else info=`${mk.length} naam • ${list.length} entries`}
  $('ud-info').textContent=info;
- $('ud-body').innerHTML=(list.map(udRow).join('')||`<tr><td colspan="6" style="padding:18px;color:#64748b">${q?'Is naam ki koi entry nahi mili':'Abhi koi entry nahi.'}</td></tr>`)+tr}
+ $('ud-body').innerHTML=(list.map(udRow).join('')||`<tr><td colspan="7" style="padding:18px;color:#64748b">${q?'Is naam ki koi entry nahi mili':'Abhi koi entry nahi.'}</td></tr>`)+tr}
 function addUd(e){e.preventDefault();let name=$('ud-n').value.trim();if(!name)return toast('Naam bharein');
  const amount=parseFloat($('ud-a').value)||0,paid=parseFloat($('ud-p').value)||0;if(!amount&&!paid)return toast('Amount ya Paid bharein');
  const ex=(state.accounts[udId]||[]).find(x=>x.name!==undefined&&kv(x.name)===kv(name));if(ex)name=ex.name;
@@ -718,12 +720,12 @@ function delUd(id){if(pendDel!==id){pendDel=id;renderUd();return toast('Delete k
 /* ---------- SHEET + RATE SHEET (main fixes) ---------- */
 const PERS_COLS=[{n:'Name',t:'text'},{n:'Amount Given',t:'num'},{n:'Description',t:'text'},{n:'Amount Received',t:'num'}];
 const RATE_COLS=[{n:'Products',t:'text'},{n:'Net rate',t:'num'},{n:'Price',t:'num'},{n:'MRP',t:'num'},{n:'Rate',t:'num'},{n:'GST %',t:'num'},{n:'Qty.',t:'num'}];
-const RATE_FORM=`<input id="sh-f0" class="ai" type="text" list="sh-nl" placeholder="Product" autocomplete="off" style="grid-column:span 2"/>
-<input id="sh-f1" class="ai" type="number" step="0.01" placeholder="Rate ₹" style="grid-column:span 1"/>
-<input id="sh-f2" class="ai" type="number" step="0.01" placeholder="GST % (auto 5)" style="grid-column:span 1"/>
-<input id="sh-f3" class="ai" type="number" step="0.01" placeholder="MRP ₹" style="grid-column:span 1"/>
+const RATE_FORM=`<input id="sh-f0" class="ai" type="text" list="sh-nl" placeholder="Product" autocomplete="off" style="grid-column:span 3"/>
 <input id="sh-f4" class="ai" type="number" step="0.01" placeholder="Qty" style="grid-column:span 1"/>
-<button class="adb" style="grid-column:span 6;padding:8px">Add</button>`;
+<input id="sh-f1" class="ai" type="number" step="0.01" placeholder="Rate ₹"/>
+<input id="sh-f2" class="ai" type="number" step="0.01" placeholder="GST %"/>
+<input id="sh-f3" class="ai" type="number" step="0.01" placeholder="MRP ₹"/>
+<button class="adb" style="padding:8px">Add</button>`;
 
 const cAcc=k=>state.custom.find(x=>x.id===k);
 const fmtOf=k=>{if(k==='personal')return'personal';const a=cAcc(k);if(!a)return'';if(a.fmt==='rate'||((a.fmt==='sheet'||!a.fmt)&&/sunwin|rate/i.test(a.name||'')))return'rate';return a.fmt||((a.cat==='udhaar'||/udhaar|udhar|उधार/i.test(a.name))?'udhaar':'cash')};
@@ -759,7 +761,7 @@ function shScrollEnd(){const t=$('sh-st');if(t)setTimeout(()=>{t.scrollTop=t.scr
 function openSheet(k){shId=k;cashKey=k;$('sh-q').value='';plOpen=false;const cs=colsOf(k);
  if(fmtOf(k)==='rate'){
   $('sh-form').innerHTML=RATE_FORM;
-  $('sh-form').style.gridTemplateColumns='1.4fr 1fr 1fr 1fr 1fr auto';
+  $('sh-form').style.gridTemplateColumns='repeat(4,1fr)';
  }else{
   $('sh-form').innerHTML=cs.map((c,i)=>`<input id="sh-f${i}" class="ai" ${c.t==='num'?'type="number" step="0.01"':'type="text"'} placeholder="${esc(c.n)}${c.t==='num'?' ₹':''}" autocomplete="off" style="grid-column:span 3"${i===0&&c.t!=='num'?' list="sh-nl"':''}/>`).join('')+'<button class="adb" style="grid-column:span 6;padding:8px">Add</button>';
   $('sh-form').style.gridTemplateColumns='repeat(6,1fr)';
@@ -774,7 +776,7 @@ function renderSheet(){const k=shId,cs=colsOf(k);if(!cs.length)return;
  if(isR){
   // Products | Net rate | Price | MRP | Rate | GST % | Qty | Date | Edit
   const W=Math.max(320,$('sh-st').clientWidth-4);
-  const px=[.22,.11,.11,.11,.11,.09,.09,.10,.06].map(x=>Math.round(x*W));
+  const px=[.34,.22,.22,.22,.18,.14,.14,.22,.20].map(x=>Math.round(x*W));
   $('sh-cg').innerHTML=px.map(w=>`<col style="width:${w}px">`).join('');
   tbl.style.width=px.reduce((a,b)=>a+b,0)+'px';
   $('sh-th').innerHTML='<tr><th>Products</th><th class="hn">Net rate</th><th class="hn">Price</th><th class="hn">MRP</th><th class="hn">Rate</th><th class="hn">GST %</th><th class="hn">Qty</th><th>Date</th><th></th></tr>';
